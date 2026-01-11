@@ -77,14 +77,10 @@
         text("نقطه x را انتخاب کنید", width/2, TOP_UI_HEIGHT / 2);
       } else if (stage === 1) {
         fill(200, 0, 0);
-        text("دوباره نزدیک به نقطه x کلیک کنید", width/2, TOP_UI_HEIGHT / 2);
+        text("دوباره روی نقطه x کلیک کنید", width/2, TOP_UI_HEIGHT / 2);
       } else if (stage === 2) {
-        fill(0);
+        
         textSize(30);
-        text("فاصله: 0", width/2, height - 210);
-        fill(0,0,200);
-        textSize(30);
-        text("اگر شیء در نقطه‌ی x باشد، متر باید فاصله‌ی شیء\n تا خودش را برابر صفر نشان دهد. همچنین مطلوب است\n اگر متر به گونه‌ای باشد که وقتی فاصله‌ی شی تا نقطه‌ای\n دیگر مانند y را صفر اعلام کرد، بتوانیم بگوییم شیء در نقطه‌ی y است.", width/2, TOP_UI_HEIGHT * 6);
         fill(50);
         text("نقطه y را انتخاب کنید", width/2, TOP_UI_HEIGHT / 2);
       } else if (stage === 3) {
@@ -149,13 +145,27 @@
         text(`${distXZ.toFixed(2)} متر`, midXZX, midXZY);
       }
 
-      if (points.length >= 2) {
-        let baseY = height - BOTTOM_UI_HEIGHT + 50;  
+      if (points.length >= 1) {
+        let baseY = height - BOTTOM_UI_HEIGHT + 20;  
         let lineHeight = constrain(height / 12, 40, 70);  
         fill(0);
         textAlign(CENTER, TOP);
         textStyle(NORMAL);
 
+        if (stage === 2) {
+          
+          textSize(constrain(height / 18, 32, 52));
+          textStyle(BOLD);
+          text(`فاصله (x تا x): 0`, width/2, baseY);
+          
+          textStyle(NORMAL);
+          fill(0, 0 ,200);
+          textSize(constrain(height / 22, 26, 42));
+          text("اگر شیء در نقطه‌ی x باشد، متر باید فاصله‌ی شیء", width/2, baseY + lineHeight);
+          text(" تا خودش را برابر صفر نشان دهد. همچنین مطلوب است", width/2, baseY + 1.7 * lineHeight);
+          text(" اگر متر به گونه‌ای باشد که وقتی فاصله‌ی شی تا نقطه‌ای",width/2, baseY + 2.4 * lineHeight);
+          text(" دیگر مانند y را صفر اعلام کرد، بتوانیم بگوییم شیء در نقطه‌ی y است.",width/2, baseY + 3.1 * lineHeight);
+        }
         if (points.length === 2) {
           let d = dist(points[0].x, points[0].y, points[1].x, points[1].y) / PIXELS_PER_METER;
           
@@ -164,7 +174,7 @@
           text(`فاصله (x تا y): ${d.toFixed(2)} متر`, width/2, baseY);
           
           textStyle(NORMAL);
-          fill(0, 0, 200);
+          fill(60, 0, 180);
           textSize(constrain(height / 22, 26, 42));
           text("تقارن: d(x,y) = d(y,x)", width/2, baseY + lineHeight);
           text("یعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x", width/2, baseY + 2 * lineHeight);
@@ -174,7 +184,7 @@
           
           textSize(constrain(height / 18, 32, 52));
           textStyle(BOLD);
-          text(`d(x,y) = ${dxy.toFixed(2)} متر`, width/2, baseY);
+          text(`فاصله (x تا y): ${dxy.toFixed(2)} متر`, width/2, baseY);
           
           textStyle(NORMAL);
           fill(120, 0, 160);
