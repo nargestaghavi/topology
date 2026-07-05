@@ -11,8 +11,7 @@
     href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400..700&family=Handjet:wght,ELSH@100..900,2&family=Marhey:wght@300..700&display=swap"
     rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <style>
-    :root {
+  <style>:root {
   --bg: #050810;
   --bg-panel: rgba(10, 15, 30, 0.88);
   --accent-cyan: #00e5ff;
@@ -63,10 +62,6 @@ body {
   text-align: center;
   pointer-events: none;
   z-index: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
 }
 
 .overlay h1 {
@@ -84,13 +79,13 @@ body {
   font-size: 1.1em;
   margin-top: 12px;
   letter-spacing: 1px;
-  width: 70vw;
 }
 
 .hero-spacer { height: 100vh; }
 
 /* ---------- نوار پیمایش ---------- */
 
+/* پیش‌فرض (موبایل): نوار افقی چسبیده به بالا */
 .navbar {
   position: sticky;
   top: 0;
@@ -105,6 +100,18 @@ body {
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(0, 229, 255, 0.25);
   flex-wrap: wrap;
+
+  /* مخفی تا وقتی از روی هدر رد بشیم */
+  opacity: 0;
+  transform: translateY(-16px);
+  pointer-events: none;
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.navbar.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .navbar a {
@@ -114,13 +121,54 @@ body {
   font-size: 1.05em;
   padding: 6px 16px;
   border-radius: 999px;
-  transition: color 0.2s, background 0.2s;
+  white-space: nowrap;
 }
 
 .navbar a:hover,
 .navbar a.active {
   color: var(--bg);
   background: var(--accent-cyan);
+}
+
+/* لپ‌تاپ و صفحه‌های بزرگ: نوار به سایدبار عمودی سمت راست تبدیل می‌شود */
+@media (min-width: 900px) {
+  .navbar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: auto;
+    z-index: 6;
+    width: 210px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 6px;
+    padding: 120px 16px 40px;
+    border-bottom: none;
+    border-left: 1px solid rgba(0, 229, 255, 0.25);
+    transform: translateX(30px);
+  }
+
+  .navbar.visible {
+    transform: translateX(0);
+  }
+
+  .navbar a {
+    text-align: center;
+    padding: 10px 16px;
+  }
+
+  /* فضای سمت راست صفحه برای جا دادن سایدبار ثابت */
+  .definition,
+  .definition-title,
+  .math-content,
+  .iframe-container,
+  .reference {
+    margin-right: 230px !important;
+    margin-left: 20px !important;
+    width: auto ;
+  }
 }
 
 /* ---------- محتوای اصلی ---------- */
@@ -223,6 +271,10 @@ body {
   transform: translateY(0);
 }
 
+.empty{
+  height: 80vh;
+}
+
 @media (max-width: 600px) {
   .navbar { gap: 2px; padding: 10px; }
   .navbar a { padding: 5px 10px; font-size: 0.9em; }
@@ -231,6 +283,7 @@ body {
     padding-right: 16px;
   }
 }
+
 
   </style>
 </head>
@@ -255,6 +308,8 @@ body {
           <li><a href="#3">چک کردن متریک</a></li>
           <li><a href="#4">کوییز</a></li>
         </ul>
+
+        <div class="empty"></div>
 
         <p class="definition">
           <span class="distance">فاصله</span> یکی از بنیادی ترین مفاهیم ریاضی است که در ظاهر ساده به نظر میرسد. مستقل از
@@ -507,6 +562,7 @@ body {
         <div class="iframe-container">
           <iframe src="quiz.html" class="interactive iframe-quiz" frameborder="0" scrolling="no" allowfullscreen></iframe>
         </div>
+
         <div class="reference">
           <p class="ref-label">مرجع:</p>
           <p class="ref-title">فضاهای متریک با طعم توپولوژی</p>
@@ -516,8 +572,7 @@ body {
           <a href="https://topology-app.pages.dev/" class="ref-link">https://topology-app.pages.dev</a>
         </div>
 
-        <script>
-            /* ---------- صحنه سه‌بعدی هدر: اشکال با اسکرول پراکنده می‌شوند ---------- */
+        <script>/* ---------- صحنه سه‌بعدی هدر: اشکال با اسکرول پراکنده می‌شوند ---------- */
 
 let shapes = [];
 let points = [];
@@ -528,8 +583,8 @@ function setup() {
   let canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   canvas.parent('header-canvas');
 
-  shapes.push({ type: 'box', pos: createVector(200, 0, 0), size: 90, color: [255, 92, 199], scatterDir: createVector(-1, -0.3, 0.4) });
-  shapes.push({ type: 'octahedron', pos: createVector(-200, 0, 0), size: 90, color: [85, 242, 192], scatterDir: createVector(1, 0.4, -0.3) });
+  shapes.push({ type: 'box', pos: createVector(200, 0, 0), size: 100, color: [255, 92, 199], scatterDir: createVector(-1, -0.3, 0.4) });
+  shapes.push({ type: 'octahedron', pos: createVector(-200, 0, 0), size: 100, color: [85, 242, 192], scatterDir: createVector(1, 0.4, -0.3) });
 
   for (let i = 0; i < 25; i++) {
     let pos = p5.Vector.random3D().mult(random(500, 900));
@@ -554,6 +609,9 @@ function updateScrollProgress() {
 
   let headerCanvas = document.getElementById('header-canvas');
   if (headerCanvas) headerCanvas.style.opacity = 1 - scrollProgress * 0.9;
+
+  let navbar = document.querySelector('.navbar');
+  if (navbar) navbar.classList.toggle('visible', scrollProgress > 0.5);
 }
 
 function draw() {
