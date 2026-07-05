@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <title>آموزش فضای متریک</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400..700&family=Handjet:wght,ELSH@100..900,2&family=Marhey:wght@300..700&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <div class="main">
+    <div class="page-bg">
+      <div class="viewport">
+        <div id="header-canvas"></div>
+        <div class="overlay">
+          <h1>فضای متریک</h1>
+        </div>
+
+        <ul class="navbar">
+          <li><a href="#1">تعریف</a></li>
+          <li><a href="#2">انواع متریک‌ها</a></li>
+          <li><a href="#3">چک کردن متریک</a></li>
+          <li><a href="#4">کوییز</a></li>
+        </ul>
+
+        <p class="definition">
+          <span class="distance">فاصله</span> یکی از بنیادی ترین مفاهیم ریاضی است که در ظاهر ساده به نظر میرسد. مستقل از
+          آنکه معیاری برای سنجش دور یا نزدیک بودن نقاط یا اشیاء در خط، صفحه یا فضای سه‌بعدی وجود داشته یا نداشته باشد،
+          با اندکی تعمق، میتوان خواص اساسی مفهوم فاصله را دریافت. برای آنکه دیدگاه خود را از هندسه‌ی اقلیدسی کاملا مستقل
+          نماییم، تصور میکنیم که در فضایی دیگر هستیم و منظور از متر ابزاری است که برای سنجیدن فاصله‌ی دو شی(که ممکن است
+          هر چیزی باشند) به کار می‌بریم. اگر در این فضا ابزاری به نام متر به دست ما دهند، برای آنکه کمیت اندازه‌گیری شده
+          توسط این متر برای ما قابل درک باشد و بتوانیم کم یا زیاد بودن فاصله را تخمین بزنیم، توقع داریم که این متر، با
+          اعداد حقیقی مدرج شده باشد.
+        </p>
+        <div class="iframe-container">
+          <iframe src="distance.html" class="interactive iframe-distance" frameborder="0" scrolling="no"
+            allowfullscreen></iframe>
+        </div>
+
+        <p class="definition">
+          این چهار خاصیت اساس تعریف فاصله یا متر می‌باشد.
+        </p>
+        <span id="1">
+          <pre>
+
+
+
+
+
+  </pre>
+        </span>
+        <div class="definition-title">
+          تعریف متر و فضای متریک
+        </div>
+        <div class="math-content">
+
+          <p>
+            فرض کنیم \( X \) مجموعه‌ای دلخواه باشد.
+            تابع
+          </p>
+
+          <p>
+            $$
+            d : X \times X \longrightarrow \mathbb{R}
+            $$
+          </p>
+
+          <p>
+            را یک <strong>متریک</strong> یا <strong>متر</strong> روی \( X \) می‌نامیم هرگاه شرایط زیر برقرار باشد:
+          </p>
+
+          <p>
+            i) به ازای هر \( x , y \in X \) داشته باشیم:
+            $$
+            d(x,y) \ge 0
+            $$
+          </p>
+
+          <p>
+            ii) به ازای هر \( x , y \in X \) داشته باشیم:
+            $$
+            d(x,y) = 0 \iff x = y
+            $$
+          </p>
+
+          <p>
+            iii) به ازای هر \( x , y \in X \) داشته باشیم:
+            $$
+            d(x,y) = d(y,x)
+            $$
+          </p>
+
+          <p>
+            iv) به ازای هر \( x , y , z \in X \) داشته باشیم:
+            $$
+            d(x,y) \le d(x,z) + d(z,y)
+            $$
+            (نامساوی مثلث)
+          </p>
+
+          <p>
+            در صورتی که d یک متر روی \( X \) باشد \((X,d)\) یک <strong>فضای متریک</strong> می‌نامیم و می‌گوییم فضای \( X
+            \) به متر d مجهز شده است.
+          </p>
+
+        </div>
+
+        <div class="iframe-container">
+          <iframe src="metric_point.html" class="interactive iframe-metric-point" frameborder="0" scrolling="no"
+            allowfullscreen></iframe>
+        </div>
+
+        <span id="2">
+          <pre>
+
+
+
+
+
+  </pre>
+        </span>
+
+        <div class="definition-title">انواع متریک‌ها در توپولوژی</div>
+
+        <div class="math-content">
+          <h4>انواع مهم متریک‌ها روی \(\mathbb{R}^n\)</h4>
+
+          <p>
+            متریک‌های زیر روی فضای \(\mathbb{R}^n\) تعریف می‌شوند و همگی
+            <strong>هم‌ارز توپولوژیکی</strong> هستند (یعنی توپولوژی یکسانی تولید می‌کنند):
+          </p>
+
+          <ul>
+            <li>
+              <strong>متریک اقلیدسی :</strong>
+              \[
+              d_2(x,y) = \sqrt{\sum_{i=1}^n (x_i - y_i)^2}
+              \]
+              شکل گوی واحد در \(\mathbb{R}^2\): دایره
+            </li>
+
+            <li>
+              <strong>متریک منهتن :</strong>
+              \[
+              d_1(x,y) = \sum_{i=1}^n |x_i - y_i|
+              \]
+              شکل گوی واحد در \(\mathbb{R}^2\): لوزی (الماس)
+            </li>
+
+            <li>
+              <strong>متریک بیشینه :</strong>
+              \[
+              d_\infty(x,y) = \max_{1 \le i \le n} |x_i - y_i|
+              \]
+              شکل گوی واحد در \(\mathbb{R}^2\): مربع
+            </li>
+
+
+          </ul>
+
+          <p>
+            <strong>نکته:</strong> اگرچه شکل گوی‌های واحد در این متریک‌ها متفاوت است،
+            اما همگی توپولوژی استاندارد \(\mathbb{R}^n\) را القا می‌کنند.
+          </p>
+
+          <h3>متریک گسسته</h3>
+
+          <p>
+            <strong>متریک گسسته</strong> روی هر مجموعه‌ی \(X\) به صورت زیر تعریف می‌شود:
+          </p>
+
+          \[
+          d(x,y) =
+          \begin{cases}
+          0 & \text{} x = y, \\
+          1 & \text{} x \neq y.
+          \end{cases}
+          \]
+
+          <p>
+            این تابع تمام خواص یک متریک را دارد:
+            نامنفی بودن، تقارن و نابرابری مثلثی.
+          </p>
+
+          <p>
+            <strong>ویژگی مهم:</strong>
+            متریک گسسته توپولوژی گسسته ایجاد می‌کند؛ یعنی هر زیرمجموعه از \(X\) باز است
+            و هر نقطه یک همسایگی جداگانه دارد.
+          </p>
+
+
+          <div class="section">
+            <h3>سایر متریک‌های مهم</h3>
+            <ul>
+              <li><strong>متریک همینگ:</strong> تعداد موقعیت‌های متفاوت در دنباله‌ها.</li>
+              <li><strong>متریک هاسدورف:</strong> فاصله بین زیرمجموعه‌های بسته.</li>
+              <li><strong>متریک ناشی از نرم:</strong> \(d(x,y) = \|x - y\|\).</li>
+            </ul>
+          </div>
+
+          <div class="note">
+            <strong>نکته کلیدی:</strong> در \(\mathbb{R}^n\)، متریک‌های \(\ell_p\) هم‌ارز هستند و توپولوژی استاندارد را
+            می‌دهند، اما شکل گوی‌های باز متفاوت است.
+          </div>
+        </div>
+
+        <div class="iframe-container">
+          <iframe src="metric_distance.html" class="interactive iframe-metric-distance" frameborder="0" scrolling="no"
+            allowfullscreen></iframe>
+        </div>
+
+        <div class="definition-title">نرم (Norm) و فضای متریک</div>
+        <div class="math-content">
+          <p>
+            <strong>نرم (Norm):</strong> یک تابع روی فضای برداری \(V\) است که به هر بردار \(v \in V\) یک عدد غیرمنفی
+            نسبت می‌دهد:
+            \[
+            \|v\| \ge 0
+            \]
+            و شرایط زیر را دارد:
+          </p>
+          <ul>
+            <li>صفر فقط برای بردار صفر: \(\|v\| = 0 \iff v = 0\)</li>
+            <li>همسانی با ضرب اسکالر: \(\|\alpha v\| = |\alpha| \cdot \|v\|\)</li>
+            <li>نابرابری مثلث: \(\|v + w\| \le \|v\| + \|w\|\)</li>
+          </ul>
+
+          <p>
+            <strong>رابطه با فضای متریک:</strong> با داشتن یک نرم \(\|\cdot\|\)، می‌توان فاصله بین دو نقطه \(x, y \in
+            V\) را تعریف کرد:
+            \[
+            d(x, y) = \|x - y\|
+            \]
+            این فاصله یک <em>متریک</em> است و مجموعه‌های باز بر اساس آن، یک فضای متریک می‌سازند.
+          </p>
+
+          <p>
+            <strong>انواع متریک‌های معروف در \(\mathbb{R}^n\) :</strong>
+          </p>
+          <ul>
+            <li><strong>\(\ell_1\) (منهتن):</strong> \(d_1(x,y) = \sum_i |x_i - y_i|\)</li>
+            <li><strong>\(\ell_2\) (اقلیدسی):</strong> \(d_2(x,y) = \sqrt{\sum_i (x_i - y_i)^2}\)</li>
+            <li><strong>\(\ell_\infty\) (چبیشف/بیشینه):</strong> \(d_\infty(x,y) = \max_i |x_i - y_i|\)</li>
+            <li>
+              <strong>متریک مینکوفسکی \((\ell_p)\):</strong>
+              \[
+              d_p(x,y) = \left( \sum_{i=1}^n |x_i - y_i|^p \right)^{1/p},
+              p \ge 1
+              \]
+              که متریک‌های \(\ell_1\)، \(\ell_2\) و \(\ell_\infty\) حالت‌های خاص آن هستند.
+            </li>
+          </ul>
+
+          <p>
+            نکته: در \(\mathbb{R}^n\)، تمام متریک‌های \(\ell_p\) با \(p \ge 1\) توپولوژی یکسانی تولید می‌کنند، ولی شکل
+            گوی واحد آنها متفاوت است.
+            در این شبیه‌ساز می‌توانید با تغییر <strong>Norm (p)</strong> شکل گوی واحد و نام فضای متریک مربوطه را مشاهده
+            کنید.
+          </p>
+        </div>
+
+        <div class="iframe-container">
+          <iframe src="norm.html" class="interactive iframe-norm" frameborder="0" scrolling="no"
+            allowfullscreen></iframe>
+        </div>
+        <span id="3">
+          <pre>
+
+
+
+
+
+  </pre>
+        </span>
+
+
+        <div class="definition-title">آیا این تابع یک متریک است؟</div>
+        <div class="math-content">
+          <p>مجموعه‌ای داریم همراه با تابع فاصله
+            d(x,y) که برای هر دو نقطه در آن مجموعه تعریف شده.
+            این تابع اگر سه خاصیت اصلی را (نامنفی بودن _ تقارن _ نامساوی مثلث) داشته باشد، متریک نامیده می‌شود و مجموعه
+            با این تابع، فضای متریک است</p>
+          <p>در این بخش می‌توانید یک تابع را وارد کنید و بررسی کنید که آیا این تابع می‌تواند «متریک» باشد یا نه!</p>
+          <div class="iframe-container">
+            <iframe src="metric_checker.html" class="interactive iframe-metric-checker" frameborder="0" scrolling="no"
+              allowfullscreen></iframe>
+          </div>
+          <p class="point">نکته: این بررسی یک آزمون عددی روی نقاط نمونه است.
+            اگر تابع در این تست رد شود، قطعاً متریک نیست.
+            اما اگر قبول شود، به این معنی است که «به احتمال زیاد» متریک است و برای اثبات کامل، بررسی تحلیلی لازم است.
+          </p>
+        </div>
+
+        <span id="4">
+          <pre>
+
+
+
+
+
+  </pre>
+        </span>
+
+
+        <div class="definition-title">کوییز فضای متریک</div>
+        <div class="iframe-container">
+          <iframe src="quiz.html" class="interactive iframe-quiz" frameborder="0" scrolling="no"
+            allowfullscreen></iframe>
+        </div>
+        <div class="reference">
+
+          <pre style="color: black;">مرجع:</pre>
+          <pre style="color: black;">فضاهای متریک با طعم توپولوژی</pre>
+          <pre style="color: black;"><span class="name">دکتر مجید میرزاوزیری</span></pre>
+          <pre>
+
+
+
+
+
+
+  </Pre>
+          <p style="color: rgb(57, 22, 160);">برای ادامه‌ی یادگیری در مسیر فضای متریک (نقاط درونی، مرزی، بیرونی، بستار
+            مجموعه ) به ادرس زیر مراجعه کنید:</p>
+          <a href="https://topology-app.pages.dev/" style="color: rgb(57, 22, 160);">https://topology-app.pages.dev</p>
+        </div>
+
+        <pre>
+
+
+
+
+
+  </pre>
+
+        <script src="script.js"></script>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

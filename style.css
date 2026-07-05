@@ -16,7 +16,7 @@ body {
     margin: 0;
     background: #abccdf;
     color: white;
-    direction: rtl;
+    font-size: 20px !important;
 }
 
 #header-canvas { 
@@ -159,7 +159,7 @@ iframe.short  { aspect-ratio: 16 / 10; }
     iframe.short  { height: 62.5vw; }
 }
 
-@media (max-width: 767px) {
+@media screen and (max-width: 767px) {
     .math-content {
         font-size: 52px;
         padding: 8vw;
@@ -186,7 +186,7 @@ iframe.short  { aspect-ratio: 16 / 10; }
 
     iframe {
         aspect-ratio: 10 / 12;  
-        max-width: 100%;
+        max-width: 50%;
         margin: 50px auto;
     }
 
@@ -202,7 +202,7 @@ iframe.short  { aspect-ratio: 16 / 10; }
     }
 }
 
-@media (min-width: 1024px) {
+@media screen and (min-width: 1024px) {
     h1 {
         font-size: 70px;
         text-shadow: 6px 6px #061a38, -6px -6px #061a38;
@@ -289,7 +289,7 @@ iframe.iframe-norm           { height: 1100px; }
 iframe.iframe-metric-checker { height: 950px; aspect-ratio: 4 / 3; }
 iframe.iframe-quiz           { height: 850px; }
 
-@media (max-width: 767px) {
+@media screen and (max-width: 767px) {
     .iframe-container {
         padding: 0 10px;
         margin: 30px auto;
@@ -311,7 +311,7 @@ iframe.iframe-quiz           { height: 850px; }
 @supports not (aspect-ratio: 1/1) {
     iframe.interactive { height: 56.25vw; } 
 }
-@media (min-width: 768px) {
+@media screen and (min-width: 768px) {
     .iframe-container {
         overflow: hidden; 
         border-radius: 16px;
