@@ -6,7 +6,7 @@ let shapeScale = 1;
 let targetScale = 1;
 
 function setup() {
-  let canvas = createCanvas(windowWidth, 600, WEBGL);
+  let canvas = createCanvas(windowWidth,windowHeight, WEBGL);
   canvas.parent('header-canvas');
 
   // مکعب - منهتن
