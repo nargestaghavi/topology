@@ -35,8 +35,8 @@
     --pink: #ff5cc7;
     --green: #55f2c0;
     --text1: #e2ebf4;
-    --text2: #93a4c0;
-    --color: #7e573b;
+    --text2: #94a0b3;
+    --color: rgb(23, 31, 56);
 }
 
 * {
@@ -80,12 +80,14 @@ html {
 }
 
 .overlay p {
-    color: var(--text1);
+    color: var(--text2);
     width: 70vw;
     text-align: center;
     font-family: "Handjet";
     font-size: 20px;
     margin-top: 15px;
+    font-weight: 600;
+    text-shadow: 0 0 20px gray;
 }
 
 .navbar {
@@ -97,9 +99,7 @@ html {
     align-items: center;
     list-style: none;
     padding: 10px;
-    border-radius: 10px;
     background-color: var(--color);
-    margin: 0 20px;
     flex-wrap: wrap;
     gap: 10px;
 }
@@ -113,7 +113,7 @@ html {
     opacity: 1;
     transform: translateY(0);
     position: sticky;
-    top: 20px;
+    top: 0;
     z-index: 1;
 }
 
@@ -123,6 +123,7 @@ html {
     transition: opacity 0.6s ease, transform 0.6s ease;
     background-color: var(--bg);
     margin: 30px;
+    margin-top: 200px;
     padding: 20px;
     border-radius: 12px;
 }
@@ -169,67 +170,42 @@ html {
     margin-top: 30px;
     word-break: break-word;
 }
-
-/* ---------- تبلت ---------- */
-@media (max-width: 768px) {
-    .overlay h1 {
-        font-size: 32px;
-    }
-
-    .overlay p {
-        width: 88vw;
-        font-size: 17px;
-    }
-
-    .navbar {
-        margin: 0 10px;
-        padding: 8px;
-    }
-
-    .content {
-        margin: 15px;
-        padding: 15px;
-    }
-
-    .definition-title {
-        font-size: 19px;
-    }
-
-    .iframe-container iframe {
-        max-width: 100%;
-    }
+@media screen and (min-width: 768px){
+    
+.navbar {
+    opacity: 0;
+    transform: translateX(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    display: flex;
+    flex-direction: column;
+    width: 18vw;
+    height: 100vh;
+    list-style: none;
+    padding: 10px;
+    background-color: var(--color);
+    flex-wrap: wrap;
+    gap: 10px;
+    border-left: 1px solid gray;
 }
 
-/* ---------- موبایل ---------- */
-@media (max-width: 480px) {
-    .overlay h1 {
-        font-size: 26px;
-    }
+.navbar.show1 {
+    opacity: 1;
+    transform: translateX(0);
+}
 
-    .overlay p {
-        width: 92vw;
-        font-size: 15px;
-    }
+.content {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    background-color: var(--bg);
+    margin: 30px;
+    margin-top: 200px;
+    padding: 20px;
+    width: 82vw;
+    border-radius: 12px;
+}
 
-    .navbar {
-        gap: 6px;
-        padding: 6px;
-    }
-
-    .navbar li a {
-        font-size: 13px;
-    }
-
-    .content {
-        margin: 8px;
-        padding: 10px;
-    }
-
-    .definition-title {
-        font-size: 17px;
-    }
-
-    .math-content {
-        font-size: 15px;
-    }
+.all-content{
+    display: flex;
+}
 }

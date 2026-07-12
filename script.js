@@ -110,7 +110,7 @@ const content = document.querySelector(".content");
 const navbar = document.querySelector(".navbar");
 
 window.addEventListener("scroll", () => {
-  if (window.scrollY > document.getElementsByClassName("overlay")[0].offsetHeight - 200) {
+  if (window.scrollY > document.getElementsByClassName("overlay")[0].offsetHeight) {
     targetScale = 0;
     navbar.classList.add("show1");
     setTimeout(() => {
