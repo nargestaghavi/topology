@@ -1,3 +1,4 @@
+
 let shapes = [];
 let points = [];
 let balls = [];
@@ -6,13 +7,17 @@ let shapeScale = 1;
 let targetScale = 1;
 
 function setup() {
-  let canvas = createCanvas(windowWidth,windowHeight, WEBGL);
+  let canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   canvas.parent('header-canvas');
 
-  // مکعب - منهتن
-  shapes.push({ type: 'box', pos: createVector(200, 0, 0), size: 100, color: [255, 80, 180] });
-  // هشت‌وجهی - چبیشف
-  shapes.push({ type: 'octahedron', pos: createVector(-200, 0, 0), size: 100, color: [80, 255, 180] });
+  // فاصله‌ی اشکال از مرکز، متناسب با عرض صفحه (برای موبایل کوچک‌تر می‌شود)
+  let offsetX = min(200, windowWidth / 5);
+  let shapeSize = windowWidth < 480 ? 60 : 100;
+
+  // مکعب - چبیشف (بیشینه)
+  shapes.push({ type: 'box', pos: createVector(offsetX, 0, 0), size: shapeSize, color: [255, 80, 180] });
+  // هشت‌وجهی - منهتن
+  shapes.push({ type: 'octahedron', pos: createVector(-offsetX, 0, 0), size: shapeSize, color: [80, 255, 180] });
 
   // نقاط
   for (let i = 0; i < 25; i++) {
@@ -29,17 +34,21 @@ function draw() {
   background(5, 8, 20);
   ambientLight(60);
   pointLight(150, 200, 255, 0, 0, 200);
+
   shapeScale = lerp(shapeScale, targetScale, 0.01);
 
   rotateY(frameCount * 0.004);
   rotateX(frameCount * 0.002);
 
-  shapeScale = lerp(shapeScale, targetScale, 0.01);
   if (targetScale > 0.5 || shapeScale > 0.9) {
     for (let s of shapes) {
       push();
       scale(shapeScale);
-      let offset = createVector(sin(frameCount * 0.012) * 60, cos(frameCount * 0.012) * 60, sin(frameCount * 0.012) * 40);
+      let offset = createVector(
+        sin(frameCount * 0.012) * 60,
+        cos(frameCount * 0.012) * 60,
+        sin(frameCount * 0.012) * 40
+      );
       let x = constrain(s.pos.x + offset.x, -width / 2 + 100, width / 2 - 100);
       let y = constrain(s.pos.y + offset.y, -width / 2 + 100, width / 2 - 100);
       translate(x, y, s.pos.z + offset.z);
@@ -61,13 +70,11 @@ function draw() {
     }
   }
 
-
   // توپ‌های شفاف
   noFill();
   stroke(100, 200, 255, 70);
   strokeWeight(2);
 
-  shapeScale = lerp(shapeScale, targetScale, 0.01);
   if (targetScale > 0.5 || shapeScale > 0.9) {
     for (let b of balls) {
       push();
@@ -90,14 +97,20 @@ function draw() {
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth, 600);
+  resizeCanvas(windowWidth, windowHeight);
+  let offsetX = min(200, windowWidth / 5);
+  let shapeSize = windowWidth < 480 ? 60 : 100;
+  shapes[0].pos.x = offsetX;
+  shapes[0].size = shapeSize;
+  shapes[1].pos.x = -offsetX;
+  shapes[1].size = shapeSize;
 }
 
 const content = document.querySelector(".content");
 const navbar = document.querySelector(".navbar");
 
-window.addEventListener("scroll" , () => {
-  if (window.scrollY > document.getElementsByClassName("overlay")[0].offsetHeight-200){
+window.addEventListener("scroll", () => {
+  if (window.scrollY > document.getElementsByClassName("overlay")[0].offsetHeight - 200) {
     targetScale = 0;
     navbar.classList.add("show1");
     setTimeout(() => {
@@ -106,6 +119,6 @@ window.addEventListener("scroll" , () => {
   } else {
     targetScale = 1;
     navbar.classList.remove("show1");
-    content.classList.remove("show2")
+    content.classList.remove("show2");
   }
-})
+});

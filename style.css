@@ -2,36 +2,41 @@
     font-family: "Lalezar";
     src: url("fonts/Lalezar/Lalezar-Regular.ttf");
 }
+
 @font-face {
     font-family: "Vazirmatn";
     src: url("fonts/Vazirmatn/Vazirmatn-VariableFont_wght.ttf");
 }
+
 @font-face {
     font-family: "Handjet";
     src: url("fonts/Handjet/Handjet-VariableFont_ELGR\,ELSH\,wght.ttf");
 }
+
 @font-face {
     font-family: "Estedad";
     src: url("fonts/Estedad/Estedad-VariableFont_wght.ttf");
 }
+
 @font-face {
     font-family: "Marhey";
     src: url("fonts/Marhey/Marhey-VariableFont_wght.ttf");
 }
+
 @font-face {
     font-family: "Chelsea";
     src: url("fonts/Chelsea_Market/ChelseaMarket-Regular.ttf");
 }
 
 :root {
-  --bg: #ffffff88;
-  --bg-panel: rgba(10, 15, 30, 0.88);
-  --blue: #00e5ff;
-  --pink: #ff5cc7;
-  --green: #55f2c0;
-  --text1: #e2ebf4;
-  --text2: #93a4c0;
-  --color: #7e573b;
+    --bg: #ffffff88;
+    --bg-panel: rgba(10, 15, 30, 0.88);
+    --blue: #00e5ff;
+    --pink: #ff5cc7;
+    --green: #55f2c0;
+    --text1: #e2ebf4;
+    --text2: #93a4c0;
+    --color: #7e573b;
 }
 
 * {
@@ -40,39 +45,41 @@
     box-sizing: border-box;
 }
 
-body{
+body {
     overflow-x: hidden;
+    font-family: "Vazirmatn", "Estedad", sans-serif;
 }
 
 html {
     scroll-behavior: smooth;
 }
 
-#header-canvas { 
-    width: 100%; 
+#header-canvas {
+    width: 100%;
     height: 100vh;
     position: fixed;
     z-index: -1;
 }
 
-.overlay{
+.overlay {
     display: flex;
     flex-direction: column;
     height: 100vh;
     justify-content: center;
     align-items: center;
-
+    padding: 0 16px;
 }
 
-.overlay h1{
+.overlay h1 {
     color: var(--text1);
     font-family: "Lalezar";
     font-weight: 400;
     text-shadow: 0 0 20px var(--blue), 0 0 60px rgba(0, 229, 255, 0.4);
     font-size: 45px;
+    text-align: center;
 }
 
-.overlay p{
+.overlay p {
     color: var(--text1);
     width: 70vw;
     text-align: center;
@@ -81,7 +88,7 @@ html {
     margin-top: 15px;
 }
 
-.navbar{
+.navbar {
     opacity: 0;
     transform: translateY(30px);
     transition: opacity 0.6s ease, transform 0.6s ease;
@@ -93,14 +100,16 @@ html {
     border-radius: 10px;
     background-color: var(--color);
     margin: 0 20px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
-.navbar a{
+.navbar a {
     text-decoration: none;
     color: var(--text1);
 }
 
-.navbar.show1{
+.navbar.show1 {
     opacity: 1;
     transform: translateY(0);
     position: sticky;
@@ -108,16 +117,119 @@ html {
     z-index: 1;
 }
 
-.content{
+.content {
     opacity: 0;
     transform: translateY(30px);
     transition: opacity 0.6s ease, transform 0.6s ease;
     background-color: var(--bg);
     margin: 30px;
+    padding: 20px;
+    border-radius: 12px;
 }
 
-.content.show2{
+.content.show2 {
     opacity: 1;
     transform: translateY(0);
 }
 
+.iframe-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.iframe-container iframe {
+    width: 100%;
+    max-width: 700px;
+    aspect-ratio: 4 / 3;
+    height: auto;
+    border: none;
+    border-radius: 10px;
+}
+
+.math-content {
+    overflow-x: auto;
+    line-height: 1.9;
+}
+
+.math-content ul,
+.math-content ol {
+    padding-inline-start: 24px;
+}
+
+.definition-title {
+    font-family: "Marhey";
+    font-size: 22px;
+    margin: 20px 0 10px;
+}
+
+.reference {
+    text-align: center;
+    margin-top: 30px;
+    word-break: break-word;
+}
+
+/* ---------- تبلت ---------- */
+@media (max-width: 768px) {
+    .overlay h1 {
+        font-size: 32px;
+    }
+
+    .overlay p {
+        width: 88vw;
+        font-size: 17px;
+    }
+
+    .navbar {
+        margin: 0 10px;
+        padding: 8px;
+    }
+
+    .content {
+        margin: 15px;
+        padding: 15px;
+    }
+
+    .definition-title {
+        font-size: 19px;
+    }
+
+    .iframe-container iframe {
+        max-width: 100%;
+    }
+}
+
+/* ---------- موبایل ---------- */
+@media (max-width: 480px) {
+    .overlay h1 {
+        font-size: 26px;
+    }
+
+    .overlay p {
+        width: 92vw;
+        font-size: 15px;
+    }
+
+    .navbar {
+        gap: 6px;
+        padding: 6px;
+    }
+
+    .navbar li a {
+        font-size: 13px;
+    }
+
+    .content {
+        margin: 8px;
+        padding: 10px;
+    }
+
+    .definition-title {
+        font-size: 17px;
+    }
+
+    .math-content {
+        font-size: 15px;
+    }
+}
