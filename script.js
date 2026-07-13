@@ -116,9 +116,40 @@ window.addEventListener("scroll", () => {
     setTimeout(() => {
       content.classList.add("show2");
     }, 1000);
-  } else {
+  } else{
     targetScale = 1;
     navbar.classList.remove("show1");
     content.classList.remove("show2");
   }
+
+  if (window.scrollY > document.querySelector(".content").offsetHeight) {
+    targetScale = 0;
+    navbar.classList.add("hidden1");
+    content.classList.add("hidden2");
+  } else{
+    targetScale = 1;
+    navbar.classList.remove("hidden1");
+    content.classList.remove("hidden2");
+  }
+});
+
+
+  /* ---------- برجسته کردن لینک فعال نوار پیمایش ---------- */
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  const sectionMarkers = document.querySelectorAll('.empty');
+  const navLinks = document.querySelectorAll('.navbar a');
+
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === `#${entry.target.id}`);
+        });
+      }
+    });
+  }, { rootMargin: '0px 0px -10% 0px' });
+
+  sectionMarkers.forEach(marker => spy.observe(marker));
 });
