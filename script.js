@@ -114,9 +114,7 @@ window.addEventListener("scroll", () => {
   if (window.scrollY > document.getElementsByClassName("overlay")[0].offsetHeight) {
     targetScale = 0;
     navbar.classList.add("show1");
-    setTimeout(() => {
-      content.classList.add("show2");
-    }, 500);
+    content.classList.add("show2");
   } else{
     targetScale = 1;
     navbar.classList.remove("show1");
