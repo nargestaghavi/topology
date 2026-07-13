@@ -123,11 +123,9 @@ window.addEventListener("scroll", () => {
   }
 
   if (window.scrollY > document.querySelector(".content").offsetHeight) {
-    targetScale = 0;
     navbar.classList.add("hidden1");
     content.classList.add("hidden2");
   } else{
-    targetScale = 1;
     navbar.classList.remove("hidden1");
     content.classList.remove("hidden2");
   }
