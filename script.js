@@ -106,6 +106,7 @@ function windowResized() {
   shapes[1].size = shapeSize;
 }
 
+
 const content = document.querySelector(".content");
 const navbar = document.querySelector(".navbar");
 
