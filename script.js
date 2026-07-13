@@ -116,7 +116,7 @@ window.addEventListener("scroll", () => {
     navbar.classList.add("show1");
     setTimeout(() => {
       content.classList.add("show2");
-    }, 1000);
+    }, 500);
   } else{
     targetScale = 1;
     navbar.classList.remove("show1");
