@@ -147,7 +147,6 @@ html {
     opacity: 0;
     transform: translateY(30px);
     transition: opacity 0.6s ease, transform 0.6s ease;
-    
     margin: 30px;
     margin-top: 200px;
     font-family: "Estedad";
@@ -155,9 +154,10 @@ html {
 }
 
 .texts{
-background-color: var(--bg);
-border-radius: 12px;
-    padding: 50px 30px;
+    background-color: var(--bg);
+    border-radius: 12px;
+    padding: 30px;
+    margin-top: 20px;
 }
 
 .content.show2 {
@@ -195,11 +195,15 @@ border-radius: 12px;
     padding-inline-start: 24px;
 }
 
+.about {
+    color: var(--text2);
+    text-align: center;
+}
 
 .definition-title {
     font-family: "Marhey";
     font-size: 22px;
-    margin: 20px 0 ;
+    margin: 2px 0 20px;
     color: rgb(24, 42, 98);
     font-weight: 600;
 }
@@ -225,6 +229,9 @@ strong {
     aspect-ratio: 4 / 6;
 }
 
+.iframe-metric-point{
+    aspect-ratio: 4/6.3;
+}
 
 
 @media screen and (min-width: 768px) {
@@ -326,6 +333,9 @@ strong {
 
     .iframe-distance{
     aspect-ratio: 4 / 2;
+}
+.iframe-metric-point{
+    aspect-ratio: 4/2.6;
 }
 
 }
