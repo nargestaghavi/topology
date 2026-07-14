@@ -4,204 +4,225 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ابزار تعاملی فاصله در صفحه</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Estedad:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
   <style>
-    body { margin: 0; direction: rtl; font-family: Tahoma, sans-serif; background: #f0f0f0; overflow: hidden; }
+    html, body {
+      margin: 0;
+      direction: rtl;
+      font-family: "Vazirmatn", "Estedad", Tahoma, sans-serif;
+      background-color: rgba(48, 59, 94, 0.436);
+      overflow: hidden;
+      height: 100%;
+    }
+    #font-preload {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+      font-family: "Vazirmatn", "Estedad";
+    }
   </style>
 </head>
 <body>
   <script>
     let points = [];
     const PIXELS_PER_METER = 100;
-    const CIRCLE_RADIUS = 15;
+    const CIRCLE_RADIUS = 12;
     const labels = ['x', 'y', 'z'];
     const CALIBRATION_THRESHOLD = 40;
-
-    const TOP_UI_HEIGHT = 80;
-    const BOTTOM_UI_HEIGHT = 220; 
-    const UI_RADIUS = 20;
-    const UI_MARGIN = 10;
-
+ 
+    const TOP_UI_HEIGHT = 70;
+    const BOTTOM_UI_HEIGHT = 200;
+ 
     let stage = 0;
-
-    // تشخیص موبایل
+    let fontsReady = false;
+ 
+    const FONT_SIZE = 20;
+ 
+    // رنگ‌های اصلی (روشن، مناسب برای پس‌زمینه‌ی روشن)
+    const C = {
+      blue:  [0, 130, 190],
+      pink:  [210, 40, 120],
+      green: [30, 150, 110],
+      text1: [35, 40, 50],
+      text2: [95, 100, 110],
+    };
+ 
     const isMobile = () => window.innerWidth <= 767;
-
+ 
     function setup() {
       createCanvas(windowWidth, windowHeight);
       textAlign(CENTER, CENTER);
+ 
+      if (document.fonts && document.fonts.ready) {
+        Promise.all([
+          document.fonts.load('600 20px Vazirmatn'),
+          document.fonts.load('600 20px Estedad')
+        ]).then(() => { fontsReady = true; });
+        document.fonts.ready.then(() => { fontsReady = true; });
+      } else {
+        fontsReady = true;
+      }
     }
-
+ 
+    function bodyFont(bold) {
+      textFont(fontsReady ? 'Vazirmatn' : 'Tahoma');
+      textStyle(bold ? BOLD : NORMAL);
+    }
+ 
     function draw() {
-      background(240);
-
-      // ناحیه بالا
-      noStroke();
-      fill(240);
-      rect(0, 0, width, TOP_UI_HEIGHT);
-      fill(123, 165, 207);
-      rect(UI_MARGIN, UI_MARGIN, width - 2 * UI_MARGIN, TOP_UI_HEIGHT - UI_MARGIN, UI_RADIUS);
-
-      // ناحیه وسط سفید
-      fill(255);
-      rect(0, TOP_UI_HEIGHT, width, height - TOP_UI_HEIGHT - BOTTOM_UI_HEIGHT);
-
-      // ناحیه پایین
-      fill(240);
-      rect(0, height - BOTTOM_UI_HEIGHT, width, BOTTOM_UI_HEIGHT);
-      fill(123, 165, 207);
-      rect(UI_MARGIN, height - BOTTOM_UI_HEIGHT + UI_MARGIN, width - 2 * UI_MARGIN, BOTTOM_UI_HEIGHT - 2 * UI_MARGIN, UI_RADIUS);
-
-      // رسم نقاط
+      clear(); // پس‌زمینه‌ی صفحه از طریق CSS (#ffffff88) دیده می‌شود
+ 
+      drawGrid();
+ 
+      // ----- نقاط -----
       for (let i = 0; i < points.length; i++) {
         let p = points[i];
-        if (i === 0) { stroke(200, 0, 0); fill(255, 100, 100); }
-        else if (i === 1) { stroke(0, 100, 200); fill(100, 180, 255); }
-        else { stroke(0, 150, 0); fill(100, 220, 100); }
-
-        strokeWeight(4);
+        let col = i === 0 ? C.pink : i === 1 ? C.blue : C.green;
+ 
+        noFill();
+        stroke(col[0], col[1], col[2]);
+        strokeWeight(3);
         ellipse(p.x, p.y, CIRCLE_RADIUS * 2);
-        fill(255); noStroke(); ellipse(p.x, p.y, 8, 8);
-        
-        fill(0);
-        textStyle(BOLD);
-        textSize(isMobile() ? 32 : 18);
-        text(labels[i], p.x, p.y);
+ 
+        noStroke();
+        fill(col[0], col[1], col[2], 70);
+        ellipse(p.x, p.y, CIRCLE_RADIUS * 2 - 6);
+        fill(255);
+        ellipse(p.x, p.y, 6, 6);
+ 
+        fill(col[0], col[1], col[2]);
+        bodyFont(true);
+        textSize(FONT_SIZE);
+        text(labels[i], p.x, p.y - CIRCLE_RADIUS - 18);
       }
-
-      // راهنمایی بالا
-      fill(50);
-      textSize(isMobile() ? 36 : constrain(width / 35, 16, 28));
-
-      if (stage === 0) {
-        text("نقطه x را انتخاب کنید", width/2, TOP_UI_HEIGHT / 2);
-      } else if (stage === 1) {
-        fill(200, 0, 0);
-        text("دوباره روی نقطه x کلیک کنید", width/2, TOP_UI_HEIGHT / 2);
-      } else if (stage === 2) {
-        
-        textSize(30);
-        fill(50);
-        text("نقطه y را انتخاب کنید", width/2, TOP_UI_HEIGHT / 2);
-      } else if (stage === 3) {
-        text("نقطه z را انتخاب کنید", width/2, TOP_UI_HEIGHT / 2);
-      } else if (stage === 4) {
-        fill(80, 140, 80);
-        text("برای شروع دوباره کلیک کنید", width/2, TOP_UI_HEIGHT / 2);
-      }
-
-      // فاصله اصلی X → Y
+ 
+      // ----- راهنمای بالا -----
+      fill(C.text1[0], C.text1[1], C.text1[2]);
+      bodyFont(true);
+      textSize(FONT_SIZE);
+ 
+      let hint = '';
+      if (stage === 0) hint = 'نقطه x را انتخاب کنید';
+      else if (stage === 1) hint = 'دوباره روی نقطه x کلیک کنید';
+      else if (stage === 2) hint = 'نقطه y را انتخاب کنید';
+      else if (stage === 3) hint = 'نقطه z را انتخاب کنید';
+      else if (stage === 4) hint = 'برای شروع دوباره کلیک کنید';
+ 
+      text(hint, width / 2, TOP_UI_HEIGHT / 2);
+ 
+      // ----- فاصله‌ی X → Y -----
       if (points.length >= 2) {
-        let pX = points[0];
-        let pY = points[1];
-        stroke(0, 80, 200);
-        strokeWeight(6);
+        let pX = points[0], pY = points[1];
+        stroke(C.blue[0], C.blue[1], C.blue[2]);
+        strokeWeight(3);
         line(pX.x, pX.y, pY.x, pY.y);
-
+ 
         let distXY = dist(pX.x, pX.y, pY.x, pY.y) / PIXELS_PER_METER;
         let midX = (pX.x + pY.x) / 2;
         let midY = (pX.y + pY.y) / 2;
-
-        noStroke();
-        fill(0, 80, 200, 230);
-        rect(midX - 90, midY - 25, 180, 50, 15);
-        fill(255);
-        textStyle(BOLD);
-        textSize(isMobile() ? 40 : constrain(width / 40, 18, 30));
-        text(`${distXY.toFixed(2)} متر`, midX, midY);
+        drawLabel(midX, midY - 16, `${distXY.toFixed(2)} متر`, C.blue);
       }
-
-      // فاصله‌های Y→Z و X→Z
+ 
+      // ----- فاصله‌های Y→Z و X→Z -----
       if (points.length === 3) {
-        let pY = points[1];
-        let pZ = points[2];
-        stroke(100, 150, 255);
-        strokeWeight(3);
+        let pY = points[1], pZ = points[2], pX = points[0];
+ 
+        stroke(C.green[0], C.green[1], C.green[2]);
+        strokeWeight(2.5);
         line(pY.x, pY.y, pZ.x, pZ.y);
-
         let distYZ = dist(pY.x, pY.y, pZ.x, pZ.y) / PIXELS_PER_METER;
-        let midYZX = (pY.x + pZ.x) / 2;
-        let midYZY = (pY.y + pZ.y) / 2;
-        fill(100, 150, 255, 220);
-        noStroke();
-        rect(midYZX - 70, midYZY - 22, 140, 44, 10);
-        fill(255);
-        textSize(isMobile() ? 36 : 24);
-        text(`${distYZ.toFixed(2)} متر`, midYZX, midYZY);
-
-        let pX = points[0];
-        stroke(150, 150, 150);
-        strokeWeight(3);
+        drawLabel((pY.x + pZ.x) / 2, (pY.y + pZ.y) / 2 - 16, `${distYZ.toFixed(2)} متر`, C.green);
+ 
+        stroke(C.pink[0], C.pink[1], C.pink[2]);
+        strokeWeight(2.5);
         line(pX.x, pX.y, pZ.x, pZ.y);
-
         let distXZ = dist(pX.x, pX.y, pZ.x, pZ.y) / PIXELS_PER_METER;
-        let midXZX = (pX.x + pZ.x) / 2;
-        let midXZY = (pX.y + pZ.y) / 2;
-        fill(150, 150, 150, 220);
-        noStroke();
-        rect(midXZX - 70, midXZY - 22, 140, 44, 10);
-        fill(255);
-        textSize(isMobile() ? 36 : 24);
-        text(`${distXZ.toFixed(2)} متر`, midXZX, midXZY);
+        drawLabel((pX.x + pZ.x) / 2, (pX.y + pZ.y) / 2 - 16, `${distXZ.toFixed(2)} متر`, C.pink);
       }
-
+ 
+      // ----- متن‌های پایین -----
       if (points.length >= 1) {
-        let baseY = height - BOTTOM_UI_HEIGHT + 20;  
-        let lineHeight = constrain(height / 12, 40, 70);  
-        fill(0);
+        let baseY = height - BOTTOM_UI_HEIGHT + 30;
+        let lineHeight = 30;
         textAlign(CENTER, TOP);
-        textStyle(NORMAL);
-
+ 
         if (stage === 2) {
-          
-          textSize(constrain(height / 18, 32, 52));
-          textStyle(BOLD);
-          text(`فاصله (x تا x): 0`, width/2, baseY);
-          
-          textStyle(NORMAL);
-          fill(0, 0 ,200);
-          textSize(constrain(height / 22, 26, 42));
-          text("اگر شیء در نقطه‌ی x باشد، متر باید فاصله‌ی شیء", width/2, baseY + lineHeight);
-          text(" تا خودش را برابر صفر نشان دهد. همچنین مطلوب است", width/2, baseY + 1.7 * lineHeight);
-          text(" اگر متر به گونه‌ای باشد که وقتی فاصله‌ی شی تا نقطه‌ای",width/2, baseY + 2.4 * lineHeight);
-          text(" دیگر مانند y را صفر اعلام کرد، بتوانیم بگوییم شیء در نقطه‌ی y است.",width/2, baseY + 3.1 * lineHeight);
+          fill(C.pink[0], C.pink[1], C.pink[2]);
+          bodyFont(true);
+          textSize(FONT_SIZE);
+          text(`فاصله (x تا x): 0`, width / 2, baseY);
+ 
+          bodyFont(false);
+          fill(C.text2[0], C.text2[1], C.text2[2]);
+          textSize(FONT_SIZE);
+          text("اگر شیء در نقطه‌ی x باشد، متر باید فاصله‌ی شیء", width / 2, baseY + lineHeight);
+          text("تا خودش را برابر صفر نشان دهد. همچنین مطلوب است", width / 2, baseY + 2 * lineHeight);
+          text("اگر متر به گونه‌ای باشد که وقتی فاصله‌ی شی تا نقطه‌ای", width / 2, baseY + 3 * lineHeight);
+          text("دیگر مانند y را صفر اعلام کرد، بتوانیم بگوییم شیء در نقطه‌ی y است.", width / 2, baseY + 4 * lineHeight);
         }
+ 
         if (points.length === 2) {
           let d = dist(points[0].x, points[0].y, points[1].x, points[1].y) / PIXELS_PER_METER;
-          
-          textSize(constrain(height / 18, 32, 52));
-          textStyle(BOLD);
-          text(`فاصله (x تا y): ${d.toFixed(2)} متر`, width/2, baseY);
-          
-          textStyle(NORMAL);
-          fill(60, 0, 180);
-          textSize(constrain(height / 22, 26, 42));
-          text("تقارن: d(x,y) = d(y,x)", width/2, baseY + lineHeight);
-          text("یعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x", width/2, baseY + 2 * lineHeight);
-          
+ 
+          fill(C.blue[0], C.blue[1], C.blue[2]);
+          bodyFont(true);
+          textSize(FONT_SIZE);
+          text(`فاصله (x تا y): ${d.toFixed(2)} متر`, width / 2, baseY);
+ 
+          bodyFont(false);
+          fill(C.text2[0], C.text2[1], C.text2[2]);
+          textSize(FONT_SIZE);
+          text("تقارن: d(x,y) = d(y,x)", width / 2, baseY + lineHeight);
+          text("یعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x", width / 2, baseY + 2 * lineHeight);
+ 
         } else if (points.length === 3) {
           let dxy = dist(points[0].x, points[0].y, points[1].x, points[1].y) / PIXELS_PER_METER;
-          
-          textSize(constrain(height / 18, 32, 52));
-          textStyle(BOLD);
-          text(`فاصله (x تا y): ${dxy.toFixed(2)} متر`, width/2, baseY);
-          
-          textStyle(NORMAL);
-          fill(120, 0, 160);
-          textSize(constrain(height / 22, 26, 42));
-          text("نامساوی مثلث: d(x,y) ≤ d(x,z) + d(z,y)", width/2, baseY + lineHeight);
-          text("کوتاه‌ترین مسیر همیشه خط مستقیم است", width/2, baseY + 2 * lineHeight);
+ 
+          fill(C.blue[0], C.blue[1], C.blue[2]);
+          bodyFont(true);
+          textSize(FONT_SIZE);
+          text(`فاصله (x تا y): ${dxy.toFixed(2)} متر`, width / 2, baseY);
+ 
+          bodyFont(false);
+          fill(C.text2[0], C.text2[1], C.text2[2]);
+          textSize(FONT_SIZE);
+          text("نامساوی مثلث: d(x,y) ≤ d(x,z) + d(z,y)", width / 2, baseY + lineHeight);
+          text("کوتاه‌ترین مسیر همیشه خط مستقیم است", width / 2, baseY + 2 * lineHeight);
         }
       }
     }
-
+ 
+    function drawGrid() {
+      stroke(0, 0, 0, 12);
+      strokeWeight(1);
+      let step = 60;
+      for (let gx = 0; gx < width; gx += step) {
+        line(gx, TOP_UI_HEIGHT, gx, height - BOTTOM_UI_HEIGHT);
+      }
+      for (let gy = TOP_UI_HEIGHT; gy < height - BOTTOM_UI_HEIGHT; gy += step) {
+        line(0, gy, width, gy);
+      }
+    }
+ 
+    function drawLabel(cx, cy, label, colorArr) {
+      noStroke();
+      fill(colorArr[0], colorArr[1], colorArr[2]);
+      bodyFont(true);
+      textAlign(CENTER, CENTER);
+      textSize(FONT_SIZE);
+      text(label, cx, cy);
+    }
+ 
     function mousePressed() {
       if (mouseY < TOP_UI_HEIGHT || mouseY > height - BOTTOM_UI_HEIGHT) {
         return;
       }
-
+ 
       if (stage === 0) {
-        points[0] = {x: mouseX, y: mouseY};
+        points[0] = { x: mouseX, y: mouseY };
         stage = 1;
       } else if (stage === 1) {
         let d = dist(mouseX, mouseY, points[0].x, points[0].y);
@@ -209,17 +230,17 @@
           stage = 2;
         }
       } else if (stage === 2) {
-        points[1] = {x: mouseX, y: mouseY};
+        points[1] = { x: mouseX, y: mouseY };
         stage = 3;
       } else if (stage === 3) {
-        points[2] = {x: mouseX, y: mouseY};
+        points[2] = { x: mouseX, y: mouseY };
         stage = 4;
       } else if (stage === 4) {
         points = [];
         stage = 0;
       }
     }
-
+ 
     function windowResized() {
       resizeCanvas(windowWidth, windowHeight);
     }
