@@ -46,8 +46,8 @@
       blue:  [0, 130, 190],
       pink:  [210, 40, 120],
       green: [30, 150, 110],
-      text1: [35, 40, 50],
-      text2: [95, 100, 110],
+      text1: [146, 160, 179],
+      text2: [226, 2245, 234],
     };
  
     const isMobile = () => window.innerWidth <= 767;
@@ -158,10 +158,10 @@
           bodyFont(false);
           fill(C.text2[0], C.text2[1], C.text2[2]);
           textSize(FONT_SIZE);
-          text("اگر شیء در نقطه‌ی x باشد، متر باید فاصله‌ی شیء", width / 2, baseY + lineHeight);
-          text("تا خودش را برابر صفر نشان دهد. همچنین مطلوب است", width / 2, baseY + 2 * lineHeight);
-          text("اگر متر به گونه‌ای باشد که وقتی فاصله‌ی شی تا نقطه‌ای", width / 2, baseY + 3 * lineHeight);
-          text("دیگر مانند y را صفر اعلام کرد، بتوانیم بگوییم شیء در نقطه‌ی y است.", width / 2, baseY + 4 * lineHeight);
+          text("اگر شیء در نقطه‌ی x باشد، متر باید فاصله‌ی شیء", width / 4, baseY + lineHeight);
+          text("تا خودش را برابر صفر نشان دهد. همچنین مطلوب است", width / 4, baseY + 2 * lineHeight);
+          text("اگر متر به گونه‌ای باشد که وقتی فاصله‌ی شی تا نقطه‌ای", width / 4, baseY + 3 * lineHeight);
+          text("دیگر مانند y را صفر اعلام کرد، بتوانیم بگوییم شیء در نقطه‌ی y است.", width / 4, baseY + 4 * lineHeight);
         }
  
         if (points.length === 2) {
@@ -176,7 +176,7 @@
           fill(C.text2[0], C.text2[1], C.text2[2]);
           textSize(FONT_SIZE);
           text("تقارن: d(x,y) = d(y,x)", width / 2, baseY + lineHeight);
-          text("یعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x", width / 2, baseY + 2 * lineHeight);
+          text("یعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x", width / 4, baseY + 2 * lineHeight);
  
         } else if (points.length === 3) {
           let dxy = dist(points[0].x, points[0].y, points[1].x, points[1].y) / PIXELS_PER_METER;
@@ -189,8 +189,8 @@
           bodyFont(false);
           fill(C.text2[0], C.text2[1], C.text2[2]);
           textSize(FONT_SIZE);
-          text("نامساوی مثلث: d(x,y) ≤ d(x,z) + d(z,y)", width / 2, baseY + lineHeight);
-          text("کوتاه‌ترین مسیر همیشه خط مستقیم است", width / 2, baseY + 2 * lineHeight);
+          text("نامساوی مثلث: d(x,y) ≤ d(x,z) + d(z,y)", width / 4, baseY + lineHeight);
+          text("کوتاه‌ترین مسیر همیشه خط مستقیم است", width / 4, baseY + 2 * lineHeight);
         }
       }
     }
