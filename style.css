@@ -176,6 +176,7 @@ html {
     display: flex;
     justify-content: center;
     margin: 50px 0;
+    overflow: hidden;
 }
 
 .iframe-container iframe {
@@ -230,7 +231,11 @@ strong {
 }
 
 .iframe-metric-point{
-    aspect-ratio: 4/ 8;
+    aspect-ratio: 4 / 8;
+}
+
+.iframe-metric-distance{
+    aspect-ratio: 4 / 11;
 }
 
 
@@ -335,7 +340,11 @@ strong {
     aspect-ratio: 4 / 2;
 }
 .iframe-metric-point{
-    aspect-ratio: 4/2.6;
+    aspect-ratio: 4/2.5;
+}
+
+.iframe-metric-distance{
+    aspect-ratio: 4 / 3.7;
 }
 
 }
