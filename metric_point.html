@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>فضای متریک دوبعدی و سه‌بعدی تعاملی</title>
- 
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Estedad:wght@400;500;600;700&display=swap" rel="stylesheet">
- 
+  <link
+    href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Estedad:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
   <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.js"></script>
- 
+
   <style>
     body {
       margin: 0;
@@ -18,6 +21,7 @@
       background-color: rgba(48, 59, 94, 0.436);
       color: #E2F5EA;
     }
+
     .container {
       max-width: 1100px;
       margin-top: 0.5vw;
@@ -29,7 +33,7 @@
       display: flex;
       flex-direction: column;
     }
- 
+
     /* دسکتاپ: ستون کنترل‌ها در سمت چپ، شکل در سمت راست */
     @media (min-width: 460px) {
       .container {
@@ -37,46 +41,117 @@
         align-items: stretch;
         gap: 20px;
       }
+
       .sidebar {
         width: clamp(150px, 34%, 300px);
         flex-shrink: 0;
       }
+
       #canvasHolder {
         flex: 1;
         min-width: 0;
       }
-      p, label, select, button, input, #radiusValue {
+
+      p,
+      label,
+      select,
+      button,
+      input,
+      #radiusValue {
         font-size: 14px;
       }
     }
- 
-    .sidebar { display: flex; flex-direction: column; }
-    .row { display: block; margin: 8px 0; text-align: center; }
-    @media (min-width: 460px) {
-      .row { text-align: right; }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
     }
- 
-    select, input, label, button { padding: 10px; margin: 5px; font-size: 18px; font-family: inherit; }
-    label { color: #92A0B3; }
+
+    .row {
+      display: block;
+      margin: 8px 0;
+      text-align: center;
+    }
+
+    @media (min-width: 460px) {
+      .row {
+        text-align: right;
+      }
+    }
+
+    select,
+    input,
+    label,
+    button {
+      padding: 10px;
+      margin: 5px;
+      font-size: 18px;
+      font-family: inherit;
+    }
+
+    label {
+      color: #92A0B3;
+    }
+
     select {
       background: rgba(255, 255, 255, 0.06);
       color: #E2F5EA;
       border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 5px;
     }
-    select option { color: #111; }
-    input[type="range"] { accent-color: #0082beb4; }
-    input[type="checkbox"] { accent-color: #D22878; }
-    #radiusValue { color: #E2F5EA; font-size: 18px; }
-    button { background: #0082beb4; color: white; border: none; border-radius: 5px; cursor: pointer; }
-    button:hover { background: #0082beb4; }
-    p { font-size: 18px; color: #E2F5EA; margin: 0; }
-    #canvasHolder { display: flex; justify-content: center; align-items: center; }
-    canvas { display: block; margin: 0 auto; border-radius: 8px; max-width: 100%; }
+
+    select option {
+      color: #111;
+    }
+
+    input[type="range"] {
+      accent-color: #0082beb4;
+    }
+
+    input[type="checkbox"] {
+      accent-color: #D22878;
+    }
+
+    #radiusValue {
+      color: #E2F5EA;
+      font-size: 18px;
+    }
+
+    button {
+      background: #0082beb4;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0082beb4;
+    }
+
+    p {
+      font-size: 18px;
+      color: #E2F5EA;
+      margin: 0;
+    }
+
+    #canvasHolder {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    canvas {
+      display: block;
+      margin: 0 auto;
+      border-radius: 8px;
+      max-width: 100%;
+    }
   </style>
 </head>
+
 <body>
-    <div class="container">
+  <div class="container">
     <div class="sidebar">
       <p class="row">با دکمه زیر بین حالت دوبعدی و سه‌بعدی جابه‌جا شوید.</p>
       <div class="row"><button id="modeButton">حالت دوبعدی</button></div>
@@ -94,26 +169,26 @@
       </div>
       <div class="row"><label><input type="checkbox" id="wireframe"> نمایش لبه‌ها</label></div>
     </div>
- 
+
     <div id="canvasHolder"></div>
   </div>
- 
+
   <script>
     let currentMetric = 'euclidean';  // متریک فعلی (شروع با اقلیدسی)
     let r = 150;                      // شعاع فعلی توپ
     let showWire = false;             // آیا لبه‌ها نمایش داده شوند؟
     let is3D = true;                  // شروع با حالت سه‌بعدی
-    let p5Instance = null;            
- 
+    let p5Instance = null;
+
     // پالت رنگی هماهنگ با ابزار فاصله: x = صورتی، y = آبی، z = سبز
     const AXIS_X = [210, 40, 120];
     const AXIS_Y = [0, 130, 190];
     const AXIS_Z = [30, 150, 110];
     const SHAPE_COLOR = [109, 113, 117];
- 
+
     // ضریب کوچک‌سازی شکل نسبت به قبل
     const SHAPE_SCALE = 0.5;
- 
+
     // اندازه‌ی کانواس متناسب با عرض و ارتفاع واقعی محل نمایش
     // تا طول (ارتفاع) شکل با طول ستون متن سمت چپ برابر شود
     function getCanvasSize() {
@@ -121,153 +196,155 @@
       let maxW = 700;
       let availW = holder ? holder.clientWidth : window.innerWidth;
       let availH = holder ? holder.clientHeight : 0;
- 
+
       let w = Math.min(maxW, availW - 8);
       let h = w * (600 / 900);
- 
+
       // اگر ارتفاع موجود (هم‌قد ستون متن) کمتر از نسبت طبیعی بود، بر اساس آن محدود کن
       if (availH > 40 && h > availH - 8) {
         h = availH - 8;
         w = h * (900 / 600);
       }
- 
+
       return { w: Math.max(w, 220), h: Math.max(h, 150) };
     }
- 
+
     function createSketch() {
       if (p5Instance) {
         p5Instance.remove();
       }
- 
+
       if (is3D) {
         p5Instance = new p5(sketch3D);   // حالت سه‌بعدی
       } else {
         p5Instance = new p5(sketch2D);   // حالت دوبعدی
       }
     }
- 
+
     const sketch3D = (p) => {
       p.setup = () => {
         let size = getCanvasSize();
         let canvas = p.createCanvas(size.w, size.h, p.WEBGL);
         canvas.parent('canvasHolder');
       };
- 
-      
- 
+
+
+
       p.draw = () => {
-        p.background(30, 38, 61);                    
-        p.orbitControl(1, 1, 0);              
- 
+        p.background(30, 38, 61);
+        p.orbitControl(1, 1, 0);
+
         p.rotateX(-p.PI / 6);
         p.rotateY(p.PI / 4);
- 
- 
-        p.ambientLight(100);                
-        p.directionalLight(255, 255, 255, 0, 0, -1);  
- 
+
+
+        p.ambientLight(100);
+        p.directionalLight(255, 255, 255, 0, 0, -1);
+
         // رسم محورهای سه‌بعدی
         p.strokeWeight(3);
         p.stroke(...AXIS_X); p.line(-300, 0, 0, 300, 0, 0);   // محور X (صورتی)
         p.stroke(...AXIS_Y); p.line(0, -300, 0, 0, 300, 0);   // محور Y (آبی)
         p.stroke(...AXIS_Z); p.line(0, 0, -300, 0, 0, 300);   // محور Z (سبز)
- 
-        p.push();  
-        p.scale(r * SHAPE_SCALE); 
- 
+
+        p.push();
+        p.scale(r * SHAPE_SCALE);
+
         if (showWire) {
-          p.noFill();         
-          p.stroke(...SHAPE_COLOR);         
-          p.strokeWeight(1.5);  
+          p.noFill();
+          p.stroke(...SHAPE_COLOR);
+          p.strokeWeight(1.5);
         } else {
-          p.fill(SHAPE_COLOR[0], SHAPE_COLOR[1], SHAPE_COLOR[2], 200); 
-          p.noStroke();            
+          p.fill(SHAPE_COLOR[0], SHAPE_COLOR[1], SHAPE_COLOR[2], 200);
+          p.noStroke();
         }
- 
+
         // رسم شکل بر اساس متریک انتخاب‌شده
         if (currentMetric === 'euclidean') {
-          p.sphere(1); 
+          p.sphere(1);
         } else if (currentMetric === 'manhattan') {
           let s = 1;
           p.beginShape(p.TRIANGLES);
-          p.vertex(0,0,s); p.vertex(s,0,0); p.vertex(0,s,0);
-          p.vertex(0,0,s); p.vertex(0,s,0); p.vertex(-s,0,0);
-          p.vertex(0,0,s); p.vertex(-s,0,0); p.vertex(0,-s,0);
-          p.vertex(0,0,s); p.vertex(0,-s,0); p.vertex(s,0,0);
- 
-          p.vertex(0,0,-s); p.vertex(s,0,0); p.vertex(0,s,0);
-          p.vertex(0,0,-s); p.vertex(0,s,0); p.vertex(-s,0,0);
-          p.vertex(0,0,-s); p.vertex(-s,0,0); p.vertex(0,-s,0);
-          p.vertex(0,0,-s); p.vertex(0,-s,0); p.vertex(s,0,0);
+          p.vertex(0, 0, s); p.vertex(s, 0, 0); p.vertex(0, s, 0);
+          p.vertex(0, 0, s); p.vertex(0, s, 0); p.vertex(-s, 0, 0);
+          p.vertex(0, 0, s); p.vertex(-s, 0, 0); p.vertex(0, -s, 0);
+          p.vertex(0, 0, s); p.vertex(0, -s, 0); p.vertex(s, 0, 0);
+
+          p.vertex(0, 0, -s); p.vertex(s, 0, 0); p.vertex(0, s, 0);
+          p.vertex(0, 0, -s); p.vertex(0, s, 0); p.vertex(-s, 0, 0);
+          p.vertex(0, 0, -s); p.vertex(-s, 0, 0); p.vertex(0, -s, 0);
+          p.vertex(0, 0, -s); p.vertex(0, -s, 0); p.vertex(s, 0, 0);
           p.endShape();
         } else if (currentMetric === 'chebyshev') {
-          p.box(2);  
+          p.box(2);
         }
- 
-        p.pop();  
+
+        p.pop();
       };
     };
- 
+
     const sketch2D = (p) => {
       p.setup = () => {
         let size = getCanvasSize();
         let canvas = p.createCanvas(size.w, size.h);
         canvas.parent('canvasHolder');
       };
- 
+
       p.draw = () => {
         p.background(30, 38, 61);
-        p.translate(p.width/2, p.height/2); 
- 
+        p.translate(p.width / 2, p.height / 2);
+
         // مقیاس متناسب با اندازه‌ی واقعی کانواس نسبت به طرح پایه‌ی 900x600 (هرکدام محدودکننده‌تر بود)
         let s = Math.min(p.width / 900, p.height / 600);
- 
+
         // محورهای دوبعدی
         p.strokeWeight(3);
-        p.stroke(...AXIS_X); p.line(-400 * s, 0, 400 * s, 0);  
-        p.stroke(...AXIS_Y); p.line(0, -300 * s, 0, 300 * s); 
+        p.stroke(...AXIS_X); p.line(-400 * s, 0, 400 * s, 0);
+        p.stroke(...AXIS_Y); p.line(0, -300 * s, 0, 300 * s);
+        // در موبایل (عرض کانواس کمتر از 460px) شکل بزرگ‌تر نمایش داده شود
+        let mobileBoost = p.width < 460 ? 1 : 1;
         p.push();
-        p.scale(s * (r / 150) * SHAPE_SCALE);  
+        p.scale(s * (r / 150) * SHAPE_SCALE * 2 * mobileBoost);
         if (showWire) {
-          p.noFill();         
-          p.stroke(...SHAPE_COLOR);         
-          p.strokeWeight(5);  
+          p.noFill();
+          p.stroke(...SHAPE_COLOR);
+          p.strokeWeight(5);
         } else {
-          p.fill(SHAPE_COLOR[0], SHAPE_COLOR[1], SHAPE_COLOR[2], 200);  
-          p.noStroke();            
+          p.fill(SHAPE_COLOR[0], SHAPE_COLOR[1], SHAPE_COLOR[2], 200);
+          p.noStroke();
         }
- 
+
         if (currentMetric === 'euclidean') {
-          p.circle(0, 0, 300); 
+          p.circle(0, 0, 300);
         } else if (currentMetric === 'manhattan') {
           p.beginShape();
           p.vertex(0, 150);
           p.vertex(150, 0);
           p.vertex(0, -150);
           p.vertex(-150, 0);
-          p.endShape(p.CLOSE);  
+          p.endShape(p.CLOSE);
         } else if (currentMetric === 'chebyshev') {
-          p.square(-150, -150, 300);  
+          p.square(-150, -150, 300);
         }
         p.pop();
       };
     };
- 
+
     createSketch();
- 
+
     document.getElementById('modeButton').onclick = () => {
-      is3D = !is3D; 
+      is3D = !is3D;
       document.getElementById('modeButton').innerText = is3D ? 'حالت دوبعدی' : 'حالت سه‌بعدی';
       createSketch();
     };
- 
+
     document.getElementById('metricSelect').onchange = (e) => currentMetric = e.target.value;
     document.getElementById('radiusSlider').oninput = (e) => {
       r = e.target.value;
       document.getElementById('radiusValue').innerText = r;
     };
     document.getElementById('wireframe').onchange = (e) => showWire = e.target.checked;
- 
+
     let resizeTimer;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimer);
@@ -275,4 +352,5 @@
     });
   </script>
 </body>
+
 </html>
