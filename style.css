@@ -181,9 +181,13 @@ html {
 
 .iframe-container iframe {
     width: 100%;
-    height: auto;
     border: none;
     border-radius: 10px;
+    display: block;
+}
+
+.iframe-distance {
+    height: 700px;
 }
 
 .math-content {
@@ -226,17 +230,7 @@ strong {
     color: rgb(24, 42, 98);
 }
 
-.iframe-distance{
-    aspect-ratio: 4 / 7;
-}
 
-.iframe-metric-point{
-    aspect-ratio: 4 / 7.2;
-}
-
-.iframe-metric-distance{
-    aspect-ratio: 4 / 10.5;
-}
 
 
 @media screen and (min-width: 768px) {
@@ -336,15 +330,8 @@ strong {
         margin-top: 0;
     }
 
-    .iframe-distance{
-    aspect-ratio: 4 / 2;
-}
-.iframe-metric-point{
-    aspect-ratio: 4/2.5;
-}
-
-.iframe-metric-distance{
-    aspect-ratio: 4 / 3.7;
-}
+    .iframe-distance {
+        height: 400px;
+    }
 
 }

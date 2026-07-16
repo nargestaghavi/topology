@@ -20,7 +20,6 @@
     }
     .container {
       max-width: 1100px;
-      margin: 0.5vw auto 5vw;
       background-color: rgba(28, 36, 58, 0.75);
       padding: 20px;
       border-radius: 10px;
@@ -89,7 +88,7 @@
  
     .tip {
       color: #92A0B3;
-      font-size: 12px !important;
+      font-size: 18px !important;
       line-height: 1.8;
       margin-top: 10px !important;
     }
@@ -111,10 +110,10 @@
     }
     .coords .p-label { color: #E2F5EA; font-weight: 700; margin-left: 4px; }
     .coord-input {
-      width: 42px;
-      padding: 5px;
-      margin: 2px;
-      font-size: 13px;
+      width: 39px;
+      padding: 3px;
+      margin: 1px;
+      font-size: 11px;
       text-align: center;
     }
     .coords button {
@@ -146,16 +145,16 @@
       <p class="row" style="margin-top:14px;">مختصات نقاط:</p>
       <div class="coords">
         <span class="p-label">P1</span>
-        X <input type="number" id="x1" class="coord-input">
-        Y <input type="number" id="y1" class="coord-input">
-        Z <input type="number" id="z1" class="coord-input">
+        X <input type="number" id="x1" class="coord-input" min="-350" max="350" step="1">
+        Y <input type="number" id="y1" class="coord-input" min="-350" max="350" step="1">
+        Z <input type="number" id="z1" class="coord-input" min="-350" max="350" step="1">
         <button onclick="updatePoint(0)">به‌روزرسانی</button>
       </div>
       <div class="coords">
         <span class="p-label">P2</span>
-        X <input type="number" id="x2" class="coord-input">
-        Y <input type="number" id="y2" class="coord-input">
-        Z <input type="number" id="z2" class="coord-input">
+        X <input type="number" id="x2" class="coord-input" min="-350" max="350" step="1">
+        Y <input type="number" id="y2" class="coord-input" min="-350" max="350" step="1">
+        Z <input type="number" id="z2" class="coord-input" min="-350" max="350" step="1">
         <button onclick="updatePoint(1)">به‌روزرسانی</button>
       </div>
  
@@ -384,11 +383,24 @@
       updateDistance();
     });
  
+    function clampRange(v) {
+      return Math.max(-RANGE, Math.min(RANGE, v));
+    }
+ 
     function updatePoint(index) {
       if (points.length < index + 1) points[index] = { x: 0, y: 0, z: 0 };
-      points[index].x = Number(document.getElementById('x' + (index + 1)).value) || 0;
-      points[index].y = Number(document.getElementById('y' + (index + 1)).value) || 0;
-      points[index].z = Number(document.getElementById('z' + (index + 1)).value) || 0;
+      let xEl = document.getElementById('x' + (index + 1));
+      let yEl = document.getElementById('y' + (index + 1));
+      let zEl = document.getElementById('z' + (index + 1));
+      let x = clampRange(Number(xEl.value) || 0);
+      let y = clampRange(Number(yEl.value) || 0);
+      let z = clampRange(Number(zEl.value) || 0);
+      points[index].x = x;
+      points[index].y = y;
+      points[index].z = z;
+      xEl.value = x;
+      yEl.value = y;
+      zEl.value = z;
       updateDistance();
     }
  

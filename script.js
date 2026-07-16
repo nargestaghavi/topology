@@ -150,3 +150,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   sectionMarkers.forEach(marker => spy.observe(marker));
 });
+
+/* ---------- تنظیم خودکار ارتفاع iframe ها بر اساس محتوا ---------- */
+
+function autoResizeIframe(iframe) {
+  function resize() {
+    try {
+      const doc = iframe.contentWindow.document;
+      const height = doc.documentElement.scrollHeight;
+      iframe.style.height = height + "px";
+    } catch (e) {
+      console.warn("امکان خواندن ارتفاع محتوای iframe نبود:", e);
+    }
+  }
+
+  iframe.addEventListener("load", () => {
+    // تنظیم اولیه‌ی ارتفاع
+    resize();
+
+    // اگر محتوای iframe بعداً تغییر اندازه بده (مثلاً به‌خاطر انیمیشن یا فونت)
+    try {
+      const ro = new ResizeObserver(resize);
+      ro.observe(iframe.contentWindow.document.body);
+    } catch (e) {
+      // اگر ResizeObserver در دسترس نبود، فقط با resize پنجره آپدیت می‌کنیم
+    }
+
+    window.addEventListener("resize", resize);
+  });
+}
+
+document.querySelectorAll(".iframe-container iframe").forEach(autoResizeIframe);

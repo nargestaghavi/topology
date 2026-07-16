@@ -1,205 +1,364 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+ 
 <head>
   <meta charset="UTF-8">
-  <title>فضای متریک بر اساس Norm</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>فضای متریک بر اساس Norm - دوبعدی و سه‌بعدی تعاملی</title>
+ 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Estedad:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+ 
   <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.js"></script>
-
+ 
   <style>
-    body {  margin: 0; font-family: Tahoma; background: #f0f0f0; }
-    .container { max-width: 935px; margin-top: 0.5vw; margin-bottom: 5vw; background-color: rgb(123, 165, 207); padding: 2vw; border-radius: 10px; }
-    .controls { text-align: center; margin: 20px; }
-    select, input, label, button { padding: 10px; margin: 5px; font-size: 3vw; }
-    button { background: #979797; color: white; border: none; border-radius: 5px; cursor: pointer; }
-    button:hover { background: #979797; }
-
-    button, input, label {
+    body {
+      margin: 0;
+      font-family: "Vazirmatn", "Estedad", Tahoma, sans-serif;
+      background-color: rgba(48, 59, 94, 0.436);
+      color: #E2F5EA;
+    }
+ 
+    .container {
+      max-width: 1100px;
+      margin-top: 0.5vw;
+      margin-bottom: 5vw;
+      background-color: rgba(28, 36, 58, 0.75);
+      padding: 20px;
+      border-radius: 10px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+ 
+    /* دسکتاپ: ستون کنترل‌ها در سمت چپ، شکل در سمت راست */
+    @media (min-width: 460px) {
+      .container {
+        flex-direction: row-reverse;
+        align-items: stretch;
+        gap: 20px;
+      }
+ 
+      .sidebar {
+        width: clamp(150px, 34%, 300px);
+        flex-shrink: 0;
+      }
+ 
+      #canvasHolder {
+        flex: 1;
+        min-width: 0;
+      }
+ 
+      p,
+      label,
+      select,
+      button,
+      input,
+      #normValue {
+        font-size: 12px;
+      }
+    }
+ 
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+    }
+ 
+    .row {
+      display: block;
+      margin: 8px 0;
+      text-align: center;
+    }
+ 
+    @media (min-width: 460px) {
+      .row {
+        text-align: right;
+      }
+    }
+ 
+    select,
+    input,
+    label,
+    button {
       padding: 10px;
       margin: 5px;
-      font-size: 3vw;
+      font-size: 15px;
+      font-family: inherit;
     }
+ 
+    label {
+      color: #92A0B3;
+    }
+ 
+    input[type="range"] {
+      accent-color: #0082beb4;
+    }
+ 
+    input[type="checkbox"] {
+      accent-color: #D22878;
+    }
+ 
+    #normValue {
+      color: #E2F5EA;
+      font-size: 15px;
+    }
+ 
+    button {
+      background: #0082beb4;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+ 
+    button:hover {
+      background: #0082beb4;
+    }
+ 
+    p {
+      font-size: 15px;
+      color: #E2F5EA;
+      margin: 0;
+    }
+ 
     #spaceBox {
       text-align: center;
-      margin-bottom: 2vw;
-      padding: 12px;
+      margin: 8px 5px;
+      padding: 10px;
       border-radius: 8px;
-      background: #f9f9f9;
-      border: 2px dashed #30426e;
-      font-size: 3vw;
-      font-weight: bold;
-      color: #30426e;
+      background: rgba(255, 255, 255, 0.06);
+      border: 2px dashed #0082beb4;
+      font-size: 14px;
+      font-weight: 700;
+      color: #E2F5EA;
     }
-    p{
-        font-size: 3vw;
+ 
+    #spaceName {
+      color: #6FD6A8;
+    }
+ 
+    #canvasHolder {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+ 
+    canvas {
+      display: block;
+      margin: 0 auto;
+      border-radius: 8px;
+      max-width: 100%;
     }
   </style>
 </head>
-
+ 
 <body>
-<div class="container">
-
-  
-    <p style="display: inline;"> با دکمه روبه‌رو بین حالت دوبعدی و سه‌بعدی جابه‌جا شوید.</p>
-    <button id="modeButton">حالت دوبعدی</button>
-    <p style="display: inline;">(با چرخاندن شکل سه‌بعدی آن را بهتر مشاهده کنید)</p>    <br><br>
-<div class="controls">
-    <label>Norm (p):</label>
-    <input type="range" id="normSlider" min="1" max="10" step="0.1" value="2">
-    <span id="normValue">2.0</span>
-
-    <br><br>
-
-    <label>
-      <input type="checkbox" id="wireframe">
-      نمایش لبه‌ها
-    </label>  
+  <div class="container">
+    <div class="sidebar">
+      <p class="row">با دکمه زیر بین حالت دوبعدی و سه‌بعدی جابه‌جا شوید.</p>
+      <div class="row"><button id="modeButton">حالت دوبعدی</button></div>
+      <p class="row">(با چرخاندن شکل سه‌بعدی آن را بهتر مشاهده کنید)</p>
+      <div class="row"><label>Norm (p):</label>
+        <input type="range" id="normSlider" min="1" max="10" step="0.1" value="2">
+        <span id="normValue">2.0</span>
+      </div>
+      <div class="row"><label><input type="checkbox" id="wireframe"> نمایش لبه‌ها</label></div>
+      <div class="row" id="spaceBox">فضای متریک: <span id="spaceName">اقلیدسی (L2)</span></div>
+    </div>
+ 
+    <div id="canvasHolder"></div>
   </div>
-
-</div>
-
-<div id="spaceBox">
-     فضای متریک: <span id="spaceName">اقلیدسی (L2)</span>
-</div>
-
-<script>
-
-let pNorm = 2;
-let is3D = true;
-let showWire = false;
-let p5Instance = null;
-const R = 160;
-
-
-function detectSpace(p) {
-  if (Math.abs(p - 1) < 0.05) return 'منهتن (L1)';
-  if (Math.abs(p - 2) < 0.05) return 'اقلیدسی (L2)';
-  if (p >= 9.5) return 'چبیشف (L∞)';
-  return 'فضای Lp عمومی';
-}
-
-
-function createSketch() {
-  if (p5Instance) p5Instance.remove();
-  p5Instance = is3D ? new p5(sketch3D) : new p5(sketch2D);
-}
-
-
-const sketch3D = (p) => {
-  p.setup = () => {
-    let canvas = p.createCanvas(900, 600, p.WEBGL);
-    p.pixelDensity(1);
-  };
-
-  p.draw = () => {
-    p.background(240);
-
-    p.orbitControl(1, 1, 0);
-
-    p.rotateX(-p.PI / 6);
-    p.rotateY(p.PI / 4);
-
-
-    p.ambientLight(120);
-    p.directionalLight(255, 255, 255, 0, 0, -1);
-
-    p.strokeWeight(3);
-    p.stroke(255,0,0); p.line(-300,0,0,300,0,0);
-    p.stroke(0,255,0); p.line(0,-300,0,0,300,0);
-    p.stroke(0,0,255); p.line(0,0,-300,0,0,300);
-
-    p.push();
-    p.scale(R);
-
-    if (showWire) {
-          p.noFill();         
-          p.stroke(196, 152, 88);         
-          p.strokeWeight(3);   
-        } else {
-          p.fill(196, 152, 88, 200);  
-          p.noStroke();           
-        }
-
-    let res = 28;
-    p.beginShape(p.TRIANGLES);
-    for (let i = 0; i < res; i++) {
-      let t1 = p.map(i, 0, res, -p.HALF_PI, p.HALF_PI);
-      let t2 = p.map(i+1, 0, res, -p.HALF_PI, p.HALF_PI);
-
-      for (let j = 0; j < res; j++) {
-        let p1 = p.map(j, 0, res, -p.PI, p.PI);
-        let p2 = p.map(j+1, 0, res, -p.PI, p.PI);
-
-        let v = (th, ph) => {
-          let x = Math.sign(Math.cos(th)*Math.cos(ph)) * Math.pow(Math.abs(Math.cos(th)*Math.cos(ph)), 2/pNorm);
-          let y = Math.sign(Math.cos(th)*Math.sin(ph)) * Math.pow(Math.abs(Math.cos(th)*Math.sin(ph)), 2/pNorm);
-          let z = Math.sign(Math.sin(th)) * Math.pow(Math.abs(Math.sin(th)), 2/pNorm);
-          return [x, y, z];
-        };
-
-        let a = v(t1, p1), b = v(t2, p1), c = v(t2, p2), d = v(t1, p2);
-
-        p.vertex(...a); p.vertex(...b); p.vertex(...c);
-        p.vertex(...a); p.vertex(...c); p.vertex(...d);
+ 
+  <script>
+    let pNorm = 2;                    // مقدار Norm فعلی (شروع با اقلیدسی، p=2)
+    let showWire = false;             // آیا لبه‌ها نمایش داده شوند؟
+    let is3D = true;                  // شروع با حالت سه‌بعدی
+    let p5Instance = null;
+ 
+    // پالت رنگی هماهنگ با ابزار فاصله: x = صورتی، y = آبی، z = سبز
+    const AXIS_X = [210, 40, 120];
+    const AXIS_Y = [0, 130, 190];
+    const AXIS_Z = [30, 150, 110];
+    const SHAPE_COLOR = [109, 113, 117];
+ 
+    // شعاع پایه شکل و ضریب کوچک‌سازی نسبت به کانواس
+    const R = 160;
+    const SHAPE_SCALE = 0.5;
+ 
+    // تشخیص نام فضای متریک بر اساس مقدار p
+    function detectSpace(p) {
+      if (Math.abs(p - 1) < 0.05) return 'منهتن (L1)';
+      if (Math.abs(p - 2) < 0.05) return 'اقلیدسی (L2)';
+      if (p >= 9.5) return 'چبیشف (L∞)';
+      return 'فضای Lp عمومی';
+    }
+ 
+    // اندازه‌ی کانواس متناسب با عرض و ارتفاع واقعی محل نمایش
+    // تا طول (ارتفاع) شکل با طول ستون متن سمت چپ برابر شود
+    function getCanvasSize() {
+      let holder = document.getElementById('canvasHolder');
+      let maxW = 700;
+      let availW = holder ? holder.clientWidth : window.innerWidth;
+      let availH = holder ? holder.clientHeight : 0;
+ 
+      let w = Math.min(maxW, availW - 8);
+      let h = w * (600 / 900);
+ 
+      // اگر ارتفاع موجود (هم‌قد ستون متن) کمتر از نسبت طبیعی بود، بر اساس آن محدود کن
+      if (availH > 40 && h > availH - 8) {
+        h = availH - 8;
+        w = h * (900 / 600);
+      }
+ 
+      return { w: Math.max(w, 220), h: Math.max(h, 150) };
+    }
+ 
+    function createSketch() {
+      if (p5Instance) {
+        p5Instance.remove();
+      }
+ 
+      if (is3D) {
+        p5Instance = new p5(sketch3D);   // حالت سه‌بعدی
+      } else {
+        p5Instance = new p5(sketch2D);   // حالت دوبعدی
       }
     }
-    p.endShape();
-    p.pop();
-  };
-};
-
-
-const sketch2D = (p) => {
-  p.setup = () => {
-    let canvas = p.createCanvas(900, 600);
-    p.pixelDensity(1);
-  };
-
-  p.draw = () => {
-    p.background(240);
-    p.translate(p.width/2, p.height/2);
-
-    p.strokeWeight(3);
-    p.stroke(255,0,0); p.line(-400,0,400,0);
-    p.stroke(0,255,0); p.line(0,-300,0,300);
-
-    if (showWire) {
-          p.noFill();         
-          p.stroke(196, 152, 88);         
-          p.strokeWeight(3);   
+ 
+    const sketch3D = (p) => {
+      p.setup = () => {
+        let size = getCanvasSize();
+        let canvas = p.createCanvas(size.w, size.h, p.WEBGL);
+        canvas.parent('canvasHolder');
+      };
+ 
+      p.draw = () => {
+        p.background(30, 38, 61);
+        p.orbitControl(1, 1, 0);
+ 
+        p.rotateX(-p.PI / 6);
+        p.rotateY(p.PI / 4);
+ 
+        p.ambientLight(100);
+        p.directionalLight(255, 255, 255, 0, 0, -1);
+ 
+        // رسم محورهای سه‌بعدی
+        p.strokeWeight(3);
+        p.stroke(...AXIS_X); p.line(-300, 0, 0, 300, 0, 0);   // محور X (صورتی)
+        p.stroke(...AXIS_Y); p.line(0, -300, 0, 0, 300, 0);   // محور Y (آبی)
+        p.stroke(...AXIS_Z); p.line(0, 0, -300, 0, 0, 300);   // محور Z (سبز)
+ 
+        p.push();
+        p.scale(R * SHAPE_SCALE);
+ 
+        if (showWire) {
+          p.noFill();
+          p.stroke(...SHAPE_COLOR);
+          p.strokeWeight(1.5);
         } else {
-          p.fill(196, 152, 88, 200);  
-          p.noStroke();            
+          p.fill(SHAPE_COLOR[0], SHAPE_COLOR[1], SHAPE_COLOR[2], 200);
+          p.noStroke();
         }
-
-    p.beginShape();
-    for (let a = 0; a <= p.TWO_PI + 0.01; a += 0.01) {
-      let x = Math.sign(Math.cos(a)) * Math.pow(Math.abs(Math.cos(a)), 2/pNorm);
-      let y = Math.sign(Math.sin(a)) * Math.pow(Math.abs(Math.sin(a)), 2/pNorm);
-      p.vertex(x * R, y * R);
-    }
-    p.endShape(p.CLOSE);
-  };
-};
-
-
-createSketch();
-
-document.getElementById('modeButton').onclick = () => {
-  is3D = !is3D;
-  document.getElementById('modeButton').innerText =
-    is3D ? 'حالت دوبعدی' : 'حالت سه‌بعدی';
-  createSketch();
-};
-
-document.getElementById('normSlider').oninput = (e) => {
-  pNorm = parseFloat(e.target.value);
-  document.getElementById('normValue').innerText = pNorm.toFixed(1);
-  document.getElementById('spaceName').innerText = detectSpace(pNorm);
-};
-
-document.getElementById('wireframe').onchange = (e) => {
-  showWire = e.target.checked;
-};
-</script>
+ 
+        // رسم سطح Lp سه‌بعدی (superellipsoid) بر اساس مقدار p فعلی
+        let res = 18;
+        p.beginShape(p.TRIANGLES);
+        for (let i = 0; i < res; i++) {
+          let t1 = p.map(i, 0, res, -p.HALF_PI, p.HALF_PI);
+          let t2 = p.map(i + 1, 0, res, -p.HALF_PI, p.HALF_PI);
+ 
+          for (let j = 0; j < res; j++) {
+            let p1 = p.map(j, 0, res, -p.PI, p.PI);
+            let p2 = p.map(j + 1, 0, res, -p.PI, p.PI);
+ 
+            let v = (th, ph) => {
+              let x = Math.sign(Math.cos(th) * Math.cos(ph)) * Math.pow(Math.abs(Math.cos(th) * Math.cos(ph)), 2 / pNorm);
+              let y = Math.sign(Math.cos(th) * Math.sin(ph)) * Math.pow(Math.abs(Math.cos(th) * Math.sin(ph)), 2 / pNorm);
+              let z = Math.sign(Math.sin(th)) * Math.pow(Math.abs(Math.sin(th)), 2 / pNorm);
+              return [x, y, z];
+            };
+ 
+            let a = v(t1, p1), b = v(t2, p1), c = v(t2, p2), d = v(t1, p2);
+ 
+            p.vertex(...a); p.vertex(...b); p.vertex(...c);
+            p.vertex(...a); p.vertex(...c); p.vertex(...d);
+          }
+        }
+        p.endShape();
+ 
+        p.pop();
+      };
+    };
+ 
+    const sketch2D = (p) => {
+      p.setup = () => {
+        let size = getCanvasSize();
+        let canvas = p.createCanvas(size.w, size.h);
+        canvas.parent('canvasHolder');
+      };
+ 
+      p.draw = () => {
+        p.background(30, 38, 61);
+        p.translate(p.width / 2, p.height / 2);
+ 
+        // مقیاس متناسب با اندازه‌ی واقعی کانواس نسبت به طرح پایه‌ی 900x600 (هرکدام محدودکننده‌تر بود)
+        let s = Math.min(p.width / 900, p.height / 600);
+ 
+        // محورهای دوبعدی
+        p.strokeWeight(3);
+        p.stroke(...AXIS_X); p.line(-400 * s, 0, 400 * s, 0);
+        p.stroke(...AXIS_Y); p.line(0, -300 * s, 0, 300 * s);
+ 
+        p.push();
+        p.scale(s);
+ 
+        if (showWire) {
+          p.noFill();
+          p.stroke(...SHAPE_COLOR);
+          p.strokeWeight(3);
+        } else {
+          p.fill(SHAPE_COLOR[0], SHAPE_COLOR[1], SHAPE_COLOR[2], 200);
+          p.noStroke();
+        }
+ 
+        // رسم منحنی Lp دوبعدی (superellipse) بر اساس مقدار p فعلی
+        p.beginShape();
+        for (let a = 0; a <= p.TWO_PI + 0.01; a += 0.01) {
+          let x = Math.sign(Math.cos(a)) * Math.pow(Math.abs(Math.cos(a)), 2 / pNorm);
+          let y = Math.sign(Math.sin(a)) * Math.pow(Math.abs(Math.sin(a)), 2 / pNorm);
+          p.vertex(x * R, y * R);
+        }
+        p.endShape(p.CLOSE);
+ 
+        p.pop();
+      };
+    };
+ 
+    createSketch();
+ 
+    document.getElementById('modeButton').onclick = () => {
+      is3D = !is3D;
+      document.getElementById('modeButton').innerText = is3D ? 'حالت دوبعدی' : 'حالت سه‌بعدی';
+      createSketch();
+    };
+ 
+    document.getElementById('normSlider').oninput = (e) => {
+      pNorm = parseFloat(e.target.value);
+      document.getElementById('normValue').innerText = pNorm.toFixed(1);
+      document.getElementById('spaceName').innerText = detectSpace(pNorm);
+    };
+ 
+    document.getElementById('wireframe').onchange = (e) => showWire = e.target.checked;
+ 
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(createSketch, 150);
+    });
+  </script>
 </body>
+ 
 </html>
