@@ -21,6 +21,7 @@
       color: #E2F5EA;
       margin: 0;
     }
+    #display { font-size: 3vw; }
     h1 { color: #E2F5EA; text-align: center; }
 
     .container {
@@ -59,8 +60,29 @@
     }
     #display:empty::before { content: "(اینجا فرمول ساخته می‌شود)"; color: #92A0B3; }
 
-    .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 25px; }
-    .btn {
+.btn, .btn-check {
+    min-width: 0; /* شکستن قانون پیش‌فرض گرید */
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+@media (max-width: 480px) {
+    .buttons {
+        grid-template-columns: repeat(2, 1fr); /* در موبایل ۲ ستونه */
+        gap: 8px;
+    }
+    .btn, .btn-check {
+        font-size: 14px; /* به‌جای 3vw که در موبایل هم می‌تونه مشکل‌ساز بشه */
+        padding: 12px 6px;
+    }
+    .btn-check {
+        grid-column: span 2;
+    }
+}    .btn {
       padding: 18px;
       font-size: 3vw;
       border: none;
