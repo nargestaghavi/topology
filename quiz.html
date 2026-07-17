@@ -46,6 +46,11 @@
             color: #E2F5EA;
             line-height: 1.6;
             font-weight: 600;
+            height: 3.2em;
+            overflow-y: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .options {
@@ -101,24 +106,17 @@
             font-weight: bold;
         }
 
-        /* دکمه‌ی «ارسال جواب» و «سوال بعدی» به‌جای display:none/block با
-           visibility جابجا می‌شوند تا فضایشان همیشه رزرو باشد و
-           جابجا شدن‌شان باعث تغییر ناگهانی ارتفاع صفحه نشود. */
+        /* ردیف دکمه‌ها: ارتفاع ثابتی رزرو می‌شود چون همیشه یک دکمه
+           (ارسال یا بعدی) نمایش داده می‌شود، پس این بخش هرگز خالی نیست. */
         .btn-row {
             min-height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: grid;
+            place-items: center;
         }
 
         #submit-btn, #next-btn {
             grid-column: 1;
             grid-row: 1;
-        }
-
-        .btn-row {
-            display: grid;
-            place-items: center;
         }
 
         #submit-btn {
@@ -150,19 +148,57 @@
             pointer-events: none;
         }
 
-        /* فضای فیدبک از قبل به‌اندازه‌ی کافی برای چند خط توضیح رزرو می‌شود
-           تا با ظاهر شدن متن، ارتفاع صفحه ناگهان رشد نکند. */
+        /* ارتفاع فیدبک همیشه دقیقاً ثابته (height نه min-height)، با
+           اسکرول داخلی برای متن‌های بلندتر. این‌طوری، چه توضیحی نمایش
+           داده بشه چه نه، و چه کوتاه باشه چه بلند، ارتفاع کل صفحه از
+           اول تا آخر کوییز عوض نمی‌شه. */
         .feedback {
             margin: 20px 0;
             font-size: 18px;
             line-height: 1.6;
-            min-height: 4.8em;
+            height: 7em;
+            overflow-y: auto;
             color: #E2F5EA;
         }
 
         .result-container h2 {
             color: #7be3b8;
         }
+
+        /* اندازه‌های کوچک‌تر برای موبایل: دکمه‌ها (ارسال جواب، سوال بعدی،
+           شروع دوباره) و گزینه‌های سوال، هم از نظر پدینگ و هم فونت. */
+        @media (max-width: 480px) {
+            .quiz-container, .result-container {
+                padding: 18px;
+            }
+
+            .option {
+                padding: 10px 12px;
+                font-size: 14px;
+                margin: 7px 0;
+            }
+
+            button {
+                padding: 9px 18px;
+                font-size: 14px;
+                margin: 6px;
+            }
+
+            .btn-row {
+                min-height: 42px;
+            }
+
+            #question {
+                font-size: 16px;
+                height: 4.2em;
+            }
+
+            .feedback {
+                font-size: 15px;
+                height: 8em;
+            }
+        }
+
     </style>
 </head>
 <body>
