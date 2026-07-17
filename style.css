@@ -203,6 +203,7 @@ html {
 .about {
     color: var(--text2);
     text-align: center;
+    font-size: 18px;
 }
 
 .definition-title {
