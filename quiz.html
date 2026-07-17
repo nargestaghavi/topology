@@ -165,6 +165,17 @@
             color: #7be3b8;
         }
 
+        /* ارتفاع result-container با جاوااسکریپت (درست قبل از پنهان شدن
+           quiz-container) برابر با آخرین ارتفاع quiz-container تنظیم
+           می‌شود؛ به همین دلیل با flex محتوا وسط‌چین می‌شود تا در آن
+           فضای ثابت به‌شکل طبیعی قرار بگیرد. */
+        .result-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
         /* اندازه‌های کوچک‌تر برای موبایل: دکمه‌ها (ارسال جواب، سوال بعدی،
            شروع دوباره) و گزینه‌های سوال، هم از نظر پدینگ و هم فونت. */
         @media (max-width: 480px) {
@@ -350,6 +361,7 @@
         const feedbackEl = document.getElementById('feedback');
         const currentEl = document.getElementById('current');
         const totalEl = document.getElementById('total');
+        const quizContainerEl = document.querySelector('.quiz-container');
         const resultContainer = document.getElementById('result-container');
         const finalScoreEl = document.getElementById('final-score');
 
@@ -415,15 +427,21 @@
         });
 
         function showResult() {
-            document.querySelector('.quiz-container').style.display = 'none';
-            resultContainer.style.display = 'block';
+            // قبل از پنهان کردن quiz-container، ارتفاع فعلی‌اش را
+            // اندازه می‌گیریم و به result-container می‌دهیم تا ارتفاع
+            // کل صفحه در انتقال به نتیجه، تغییر نکند.
+            const height = quizContainerEl.offsetHeight;
+            resultContainer.style.minHeight = height + 'px';
+
+            quizContainerEl.style.display = 'none';
+            resultContainer.style.display = 'flex';
             finalScoreEl.textContent = score + '/' + questions.length;
         }
 
         document.getElementById('restart-btn').addEventListener('click', () => {
             currentQuestionIndex = 0;
             score = 0;
-            document.querySelector('.quiz-container').style.display = 'block';
+            quizContainerEl.style.display = 'block';
             resultContainer.style.display = 'none';
             loadQuestion();
         });

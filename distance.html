@@ -11,6 +11,20 @@
     href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Estedad:wght@400;500;600;700&display=swap"
     rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <script>
+    // تنظیمات MathJax پیش از بارگذاری کتابخانه
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']]
+      },
+      options: {
+        // فرمول‌ها LTR باقی می‌مانند حتی داخل ظرف RTL
+        renderActions: { addMenu: [] }
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <style>
     html,
     body {
@@ -21,10 +35,63 @@
       overflow: hidden;
       height: 100%;
     }
+
+    #info-panel {
+      position: fixed;
+      z-index: 5;
+      line-height: 1.55;
+      font-size: 18px;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    }
+
+    #info-panel p {
+      margin: 0 0 10px 0;
+    }
+
+    #info-panel .formula {
+      margin: 4px 0 10px 0;
+      direction: ltr;
+      /* فرمول‌های ریاضی همیشه چپ‌به‌راست نمایش داده می‌شوند */
+      text-align: inherit;
+    }
+
+    #info-panel .bold {
+      font-weight: 700;
+    }
+
+    #info-panel .c-pink { color: rgb(210, 40, 120); }
+    #info-panel .c-blue { color: rgb(0, 130, 190); }
+    #info-panel .c-green { color: rgb(30, 150, 110); }
+    #info-panel .c-text2 { color: rgb(226, 245, 234); }
+
+    /* برچسب‌های زیر به‌صورت HTML رسم می‌شوند نه canvas، چون canvas الگوریتم
+       دوجهته‌ی یونیکد (bidi) را روی متن‌های ترکیبی فارسی/لاتین اجرا نمی‌کند
+       و باعث به‌هم‌ریختن ترتیب حروف می‌شود. مرورگر برای متن HTML این کار را
+       به‌درستی انجام می‌دهد. */
+    #hint-label,
+    .dist-label {
+      position: fixed;
+      z-index: 5;
+      font-weight: 700;
+      font-size: 20px;
+      white-space: nowrap;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      unicode-bidi: plaintext;
+    }
+
+    #hint-label {
+      color: rgb(146, 160, 179);
+    }
   </style>
 </head>
 
 <body>
+  <div id="hint-label"></div>
+  <div id="dist-labels"></div>
+  <div id="info-panel"></div>
+
   <script>
     let points = [];
     const PIXELS_PER_METER = 100;
@@ -40,7 +107,6 @@
     let fontsReady = false;
 
     const FONT_SIZE = 20;
-    const INFO_FONT_SIZE = 18;
 
     const C = {
       blue: [0, 130, 190],
@@ -94,6 +160,11 @@
       } else {
         fontsReady = true;
       }
+
+      layoutInfoPanel();
+      updateInfoPanel();
+      updateHintLabel();
+      updateDistLabels();
     }
 
     function bodyFont(bold) {
@@ -127,54 +198,26 @@
         text(labels[i], p.x, p.y - CIRCLE_RADIUS - 18);
       }
 
-      // راهنمای بالا
-      fill(C.text1[0], C.text1[1], C.text1[2]);
-      bodyFont(true);
-      textSize(FONT_SIZE);
-      textAlign(CENTER, CENTER);
-
-      let hint = '';
-      if (stage === 0) hint = 'نقطه x را انتخاب کنید';
-      else if (stage === 1) hint = 'دوباره روی نقطه x کلیک کنید';
-      else if (stage === 2) hint = 'نقطه y را انتخاب کنید';
-      else if (stage === 3) hint = 'نقطه z را انتخاب کنید';
-      else if (stage === 4) hint = 'برای شروع دوباره کلیک کنید';
-
-      let area = drawArea();
-      text(hint, (area.left + area.right) / 2, TOP_UI_HEIGHT / 2);
-
-      // فاصله X→Y
+      // فاصله X→Y (فقط خط؛ برچسب متنی آن به‌صورت HTML رسم می‌شود)
       if (points.length >= 2) {
         let pX = points[0], pY = points[1];
         stroke(C.blue[0], C.blue[1], C.blue[2]);
         strokeWeight(3);
         line(pX.x, pX.y, pY.x, pY.y);
-
-        let distXY = dist(pX.x, pX.y, pY.x, pY.y) / PIXELS_PER_METER;
-        let midX = (pX.x + pY.x) / 2;
-        let midY = (pX.y + pY.y) / 2;
-        drawLabel(midX, midY - 16, `${distXY.toFixed(2)} متر`, C.blue);
       }
 
-      // فاصله‌های Y→Z و X→Z
+      // فاصله‌های Y→Z و X→Z (فقط خط؛ برچسب متنی آن‌ها به‌صورت HTML رسم می‌شود)
       if (points.length === 3) {
         let pY = points[1], pZ = points[2], pX = points[0];
 
         stroke(C.green[0], C.green[1], C.green[2]);
         strokeWeight(2.5);
         line(pY.x, pY.y, pZ.x, pZ.y);
-        let distYZ = dist(pY.x, pY.y, pZ.x, pZ.y) / PIXELS_PER_METER;
-        drawLabel((pY.x + pZ.x) / 2, (pY.y + pZ.y) / 2 - 16, `${distYZ.toFixed(2)} متر`, C.green);
 
         stroke(C.pink[0], C.pink[1], C.pink[2]);
         strokeWeight(2.5);
         line(pX.x, pX.y, pZ.x, pZ.y);
-        let distXZ = dist(pX.x, pX.y, pZ.x, pZ.y) / PIXELS_PER_METER;
-        drawLabel((pX.x + pZ.x) / 2, (pX.y + pZ.y) / 2 - 16, `${distXZ.toFixed(2)} متر`, C.pink);
       }
-
-      // متن اطلاعات (پایین در موبایل / ستون چپ در دسکتاپ)
-      drawInfoPanel();
     }
 
     function drawGrid() {
@@ -190,96 +233,126 @@
       }
     }
 
-    function drawLabel(cx, cy, label, colorArr) {
-      noStroke();
-      fill(colorArr[0], colorArr[1], colorArr[2]);
-      bodyFont(true);
-      textAlign(CENTER, CENTER);
-      textSize(FONT_SIZE);
-      text(label, cx, cy);
+    // ---- برچسب راهنمای بالا و برچسب‌های فاصله، به‌صورت HTML ----
+    // (این متن‌ها ترکیبی از حروف فارسی و لاتین/اعداد هستند؛ روی canvas این
+    // ترکیب گاهی به‌هم می‌ریزد، اما در HTML مرورگر ترتیب را درست نمایش می‌دهد)
+
+    function updateHintLabel() {
+      const el = document.getElementById('hint-label');
+      let hint = '';
+      if (stage === 0) hint = 'نقطه x را انتخاب کنید';
+      else if (stage === 1) hint = 'دوباره روی نقطه x کلیک کنید';
+      else if (stage === 2) hint = 'نقطه y را انتخاب کنید';
+      else if (stage === 3) hint = 'نقطه z را انتخاب کنید';
+      else if (stage === 4) hint = 'برای شروع دوباره کلیک کنید';
+      el.textContent = hint;
+      positionHintLabel();
     }
 
-    // شکستن متن به خطوطی که در maxW جا می‌شوند (باید بعد از تنظیم فونت/سایز صدا زده شود)
-    function wrapLines(str, maxW) {
-      let words = str.split(' ');
-      let lines = [];
-      let current = '';
-      for (let w of words) {
-        let test = current ? current + ' ' + w : w;
-        if (textWidth(test) > maxW && current) {
-          lines.push(current);
-          current = w;
-        } else {
-          current = test;
-        }
-      }
-      if (current) lines.push(current);
-      return lines;
+    function positionHintLabel() {
+      const el = document.getElementById('hint-label');
+      let area = drawArea();
+      el.style.left = ((area.left + area.right) / 2) + 'px';
+      el.style.top = (TOP_UI_HEIGHT / 2) + 'px';
     }
 
-    function drawInfoPanel() {
-      if (points.length < 1) return;
+    function addDistLabel(container, x, y, txt, colorArr) {
+      const div = document.createElement('div');
+      div.className = 'dist-label';
+      div.style.left = x + 'px';
+      div.style.top = y + 'px';
+      div.style.color = `rgb(${colorArr[0]}, ${colorArr[1]}, ${colorArr[2]})`;
+      div.textContent = txt;
+      container.appendChild(div);
+    }
 
-      let mobile = isMobile();
-      let textX, textY, maxWidth, lineHeight = 28, align;
+    function updateDistLabels() {
+      const container = document.getElementById('dist-labels');
+      container.innerHTML = '';
 
-      if (mobile) {
-        textX = width / 2;
-        textY = height - BOTTOM_UI_HEIGHT;
-        maxWidth = width * 0.85;
-        align = CENTER;
-      } else {
-        let leftW = leftUiWidth();
-        textX = leftW - 20;
-        textY = TOP_UI_HEIGHT;
-        maxWidth = leftW - 40;
-        align = RIGHT;
-      }
-
-      let cursorY = textY;
-
-      function writeParagraph(str, color, bold = false) {
-        bodyFont(bold);
-        textSize(INFO_FONT_SIZE);
-        textAlign(align, TOP);
-        let lines = wrapLines(str, maxWidth);
-        fill(color[0], color[1], color[2]);
-        for (let line of lines) {
-          text(line, textX, cursorY);
-          cursorY += lineHeight;
-        }
-      }
-
-      function gap(px = 6) { cursorY += px; }
-
-      if (stage === 2) {
-        writeParagraph(`فاصله (x تا x): 0`, C.pink, true);
-        gap();
-        writeParagraph("اگر شیء در نقطه‌ی x باشد، متر باید فاصله‌ی شیء تا خودش را برابر صفر نشان دهد.", C.text2);
-        gap();
-        writeParagraph("همچنین مطلوب است اگر متر به گونه‌ای باشد که وقتی فاصله‌ی شی تا نقطه‌ای دیگر مانند y را صفر اعلام کرد، بتوانیم بگوییم شیء در نقطه‌ی y است.", C.text2);
-      }
-
-      if (points.length === 2) {
-        let d = dist(points[0].x, points[0].y, points[1].x, points[1].y) / PIXELS_PER_METER;
-
-        writeParagraph(`فاصله (x تا y): ${d.toFixed(2)} متر`, C.blue, true);
-        gap();
-        writeParagraph("تقارن:", C.text2);
-        writeParagraph("d(x,y) = d(y,x)", C.text2);
-        gap();
-        writeParagraph("یعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x", C.text2);
+      if (points.length >= 2) {
+        let pX = points[0], pY = points[1];
+        let distXY = dist(pX.x, pX.y, pY.x, pY.y) / PIXELS_PER_METER;
+        addDistLabel(container, (pX.x + pY.x) / 2, (pX.y + pY.y) / 2 - 16, `${distXY.toFixed(2)} متر`, C.blue);
       }
 
       if (points.length === 3) {
-        let dxy = dist(points[0].x, points[0].y, points[1].x, points[1].y) / PIXELS_PER_METER;
+        let pY = points[1], pZ = points[2], pX = points[0];
 
-        writeParagraph(`فاصله (x تا y): ${dxy.toFixed(2)} متر`, C.blue, true);
-        gap();
-        writeParagraph("نامساوی مثلث: ", C.text2);
-        writeParagraph("d(x,y) ≤ d(x,z) + d(z,y)", C.text2);
-        gap();
-        writeParagraph("کوتاه‌ترین مسیر همیشه خط مستقیم است", C.text2);
+        let distYZ = dist(pY.x, pY.y, pZ.x, pZ.y) / PIXELS_PER_METER;
+        addDistLabel(container, (pY.x + pZ.x) / 2, (pY.y + pZ.y) / 2 - 16, `${distYZ.toFixed(2)} متر`, C.green);
+
+        let distXZ = dist(pX.x, pX.y, pZ.x, pZ.y) / PIXELS_PER_METER;
+        addDistLabel(container, (pX.x + pZ.x) / 2, (pX.y + pZ.y) / 2 - 16, `${distXZ.toFixed(2)} متر`, C.pink);
+      }
+    }
+
+    // ---- پنل اطلاعات به‌صورت HTML (برای رندر واقعی فرمول‌ها با MathJax) ----
+
+    function layoutInfoPanel() {
+      const panel = document.getElementById('info-panel');
+      if (isMobile()) {
+        const maxWidth = width * 0.85;
+        panel.style.left = ((width - maxWidth) / 2) + 'px';
+        panel.style.right = 'auto';
+        panel.style.top = (height - BOTTOM_UI_HEIGHT) + 'px';
+        panel.style.width = maxWidth + 'px';
+        panel.style.textAlign = 'center';
+      } else {
+        const leftW = leftUiWidth();
+        const maxWidth = leftW - 40;
+        panel.style.left = '20px';
+        panel.style.right = 'auto';
+        panel.style.top = TOP_UI_HEIGHT + 'px';
+        panel.style.width = maxWidth + 'px';
+        panel.style.textAlign = 'right';
+      }
+    }
+
+    let lastPanelKey = '';
+
+    function updateInfoPanel() {
+      const panel = document.getElementById('info-panel');
+
+      if (points.length < 1) {
+        panel.innerHTML = '';
+        panel.style.opacity = '0';
+        lastPanelKey = '';
+        return;
+      }
+      panel.style.opacity = '1';
+
+      let html = '';
+      let key = '';
+
+      if (stage === 2 && points.length === 1) {
+        key = 'stage2';
+        html += `<p class="bold c-pink">فاصله (x تا x): 0</p>`;
+        html += `<p class="c-text2">اگر شیء در نقطه‌ی x باشد، متر باید فاصله‌ی شیء تا خودش را برابر صفر نشان دهد.</p>`;
+        html += `<p class="c-text2">همچنین مطلوب است اگر متر به گونه‌ای باشد که وقتی فاصله‌ی شی تا نقطه‌ای دیگر مانند y را صفر اعلام کرد، بتوانیم بگوییم شیء در نقطه‌ی y است.</p>`;
+      } else if (points.length === 2) {
+        let d = dist(points[0].x, points[0].y, points[1].x, points[1].y) / PIXELS_PER_METER;
+        key = 'p2-' + d.toFixed(2);
+        html += `<p class="bold c-blue">فاصله (x تا y): ${d.toFixed(2)} متر</p>`;
+        html += `<p class="c-text2">تقارن:</p>`;
+        html += `<p class="formula c-text2">\\(d(x,y) = d(y,x)\\)</p>`;
+        html += `<p class="c-text2">یعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x</p>`;
+      } else if (points.length === 3) {
+        let dxy = dist(points[0].x, points[0].y, points[1].x, points[1].y) / PIXELS_PER_METER;
+        key = 'p3-' + dxy.toFixed(2);
+        html += `<p class="bold c-blue">فاصله (x تا y): ${dxy.toFixed(2)} متر</p>`;
+        html += `<p class="c-text2">نامساوی مثلث:</p>`;
+        html += `<p class="formula c-text2">\\(d(x,y) \\leq d(x,z) + d(z,y)\\)</p>`;
+        html += `<p class="c-text2">کوتاه‌ترین مسیر همیشه خط مستقیم است</p>`;
+      }
+
+      if (key === lastPanelKey) return; // از تایپ‌ست مجدد بی‌مورد جلوگیری می‌کند
+      lastPanelKey = key;
+
+      panel.innerHTML = html;
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([panel]).catch(() => {});
       }
     }
 
@@ -307,10 +380,16 @@
         points = [];
         stage = 0;
       }
+
+      updateInfoPanel();
+      updateHintLabel();
+      updateDistLabels();
     }
 
     function windowResized() {
       resizeCanvas(windowWidth, windowHeight);
+      layoutInfoPanel();
+      positionHintLabel();
     }
   </script>
 </body>
