@@ -59,7 +59,7 @@
       overflow-wrap: break-word;
       user-select: text;
     }
-    #display:empty::before { content: "(اینجا فرمول ساخته می‌شود)"; color: #92A0B3; }
+    #display:empty::before { content: "(اینجا فرمول ساخته می‌شود)"; color: #92A0B3; font-size: 18px;}
 
     .buttons {
       display: grid;
@@ -143,6 +143,7 @@
       }
       #result { padding: 13px; font-size: 15px; }
 #display{height: 60px;}
+#display:empty::before{font-size: 15px;}
     }
   </style>
 </head>
