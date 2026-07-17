@@ -35,13 +35,13 @@
         }
 
         #progress {
-            font-size: 3vw;
+            font-size: 18px;
             color: #92A0B3;
             margin-bottom: 30px;
         }
 
         #question {
-            font-size: 3vw;
+            font-size: 18px;
             margin-bottom: 30px;
             color: #E2F5EA;
             line-height: 1.6;
@@ -64,7 +64,7 @@
             cursor: pointer;
             transition: all 0.3s;
             text-align: right;
-            font-size: 3vw;
+            font-size: 18px;
         }
 
         .option:hover {
@@ -91,7 +91,7 @@
 
         button {
             padding: 12px 30px;
-            font-size: 3vw;
+            font-size: 18px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -99,6 +99,26 @@
             transition: 0.3s;
             font-family: inherit;
             font-weight: bold;
+        }
+
+        /* دکمه‌ی «ارسال جواب» و «سوال بعدی» به‌جای display:none/block با
+           visibility جابجا می‌شوند تا فضایشان همیشه رزرو باشد و
+           جابجا شدن‌شان باعث تغییر ناگهانی ارتفاع صفحه نشود. */
+        .btn-row {
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #submit-btn, #next-btn {
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        .btn-row {
+            display: grid;
+            place-items: center;
         }
 
         #submit-btn {
@@ -125,10 +145,18 @@
             background: rgba(60, 190, 140, 0.85);
         }
 
+        #submit-btn.is-hidden, #next-btn.is-hidden {
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* فضای فیدبک از قبل به‌اندازه‌ی کافی برای چند خط توضیح رزرو می‌شود
+           تا با ظاهر شدن متن، ارتفاع صفحه ناگهان رشد نکند. */
         .feedback {
             margin: 20px 0;
-            font-size: 3vw;
-            min-height: 30px;
+            font-size: 18px;
+            line-height: 1.6;
+            min-height: 4.8em;
             color: #E2F5EA;
         }
 
@@ -146,11 +174,12 @@
         
         <div id="options" class="options"></div>
         
-        <button id="submit-btn" disabled>ارسال جواب</button>
+        <div class="btn-row">
+            <button id="submit-btn" disabled>ارسال جواب</button>
+            <button id="next-btn" class="is-hidden">سوال بعدی</button>
+        </div>
         
         <div id="feedback" class="feedback"></div>
-        
-        <button id="next-btn" style="display:none;">سوال بعدی</button>
     </div>
 
     <div id="result-container" class="result-container" style="display:none;">
@@ -305,10 +334,10 @@
             });
             
             submitBtn.disabled = true;
-            nextBtn.style.display = 'none';
+            submitBtn.classList.remove('is-hidden');
+            nextBtn.classList.add('is-hidden');
             feedbackEl.textContent = '';
             selectedOption = null;
-            submitBtn.style.display = 'inline-block';
         }
 
         function selectOption(element, index) {
@@ -336,9 +365,9 @@
                 ? '<span style="color:#7be3b8;">درست!</span><br>' + q.explanation
                 : '<span style="color:#f28ab5;">غلط!</span><br>جواب درست: ' + q.options[q.answer] + '<br>' + q.explanation;
             
-            submitBtn.style.display = 'none';
+            submitBtn.classList.add('is-hidden');
             if (currentQuestionIndex < questions.length - 1) {
-                nextBtn.style.display = 'inline-block';
+                nextBtn.classList.remove('is-hidden');
             } else {
                 showResult();
             }
