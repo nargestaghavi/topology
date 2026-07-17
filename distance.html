@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="fa">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ابزار تعاملی فاصله در صفحه</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Estedad:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Estedad:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
   <style>
-    html, body {
+    html,
+    body {
       margin: 0;
       direction: rtl;
       font-family: "Vazirmatn", "Estedad", Tahoma, sans-serif;
@@ -19,6 +23,7 @@
     }
   </style>
 </head>
+
 <body>
   <script>
     let points = [];
@@ -26,36 +31,36 @@
     const CIRCLE_RADIUS = 12;
     const labels = ['x', 'y', 'z'];
     const CALIBRATION_THRESHOLD = 40;
- 
+
     const TOP_UI_HEIGHT = 70;
     const BOTTOM_UI_HEIGHT = 250;   // فقط موبایل: نوار پایین برای متن
     const MOBILE_BREAKPOINT = 480;  // زیر این عرض، حالت موبایل (نوار پایین) فعال می‌شود
- 
+
     let stage = 0;
     let fontsReady = false;
- 
+
     const FONT_SIZE = 20;
     const INFO_FONT_SIZE = 18;
- 
+
     const C = {
-      blue:  [0, 130, 190],
-      pink:  [210, 40, 120],
+      blue: [0, 130, 190],
+      pink: [210, 40, 120],
       green: [30, 150, 110],
       text1: [146, 160, 179],
       text2: [226, 245, 234],
     };
- 
+
     // این کار همیشه بر اساس عرض واقعی کانواس (که ممکن است داخل یک iframe کوچک باشد)
     // انجام می‌شود، نه window.innerWidth، چون در iframeهای باریک آن مقدار می‌تواند
     // با اندازه‌ی واقعی نمایش داده‌شده فرق داشته باشد.
     const isMobile = () => width <= MOBILE_BREAKPOINT;
- 
+
     // عرض ستون چپ متناسب با عرض واقعی صفحه/آیفریم تنظیم می‌شود
     // تا در عرض‌های کوچک، ستون بیش از حد بزرگ نشود یا فضای رسم را از بین نبرد.
     function leftUiWidth() {
       return constrain(width * 0.36, 140, 340);
     }
- 
+
     // محدوده‌ی ناحیه‌ی رسم نقاط (بسته به دسکتاپ/موبایل تغییر می‌کند)
     function drawArea() {
       if (isMobile()) {
@@ -75,11 +80,11 @@
         };
       }
     }
- 
+
     function setup() {
       createCanvas(windowWidth, windowHeight);
       textAlign(CENTER, CENTER);
- 
+
       if (document.fonts && document.fonts.ready) {
         Promise.all([
           document.fonts.load('600 20px Vazirmatn'),
@@ -90,88 +95,88 @@
         fontsReady = true;
       }
     }
- 
+
     function bodyFont(bold) {
       textFont(fontsReady ? 'Vazirmatn' : 'Tahoma');
       textStyle(bold ? BOLD : NORMAL);
     }
- 
+
     function draw() {
       clear();
       drawGrid();
- 
+
       // نقاط
       for (let i = 0; i < points.length; i++) {
         let p = points[i];
         let col = i === 0 ? C.pink : i === 1 ? C.blue : C.green;
- 
+
         noFill();
         stroke(col[0], col[1], col[2]);
         strokeWeight(3);
         ellipse(p.x, p.y, CIRCLE_RADIUS * 2);
- 
+
         noStroke();
         fill(col[0], col[1], col[2], 70);
         ellipse(p.x, p.y, CIRCLE_RADIUS * 2 - 6);
         fill(255);
         ellipse(p.x, p.y, 6, 6);
- 
+
         fill(col[0], col[1], col[2]);
         bodyFont(true);
         textSize(FONT_SIZE);
         text(labels[i], p.x, p.y - CIRCLE_RADIUS - 18);
       }
- 
+
       // راهنمای بالا
       fill(C.text1[0], C.text1[1], C.text1[2]);
       bodyFont(true);
       textSize(FONT_SIZE);
       textAlign(CENTER, CENTER);
- 
+
       let hint = '';
       if (stage === 0) hint = 'نقطه x را انتخاب کنید';
       else if (stage === 1) hint = 'دوباره روی نقطه x کلیک کنید';
       else if (stage === 2) hint = 'نقطه y را انتخاب کنید';
       else if (stage === 3) hint = 'نقطه z را انتخاب کنید';
       else if (stage === 4) hint = 'برای شروع دوباره کلیک کنید';
- 
+
       let area = drawArea();
       text(hint, (area.left + area.right) / 2, TOP_UI_HEIGHT / 2);
- 
+
       // فاصله X→Y
       if (points.length >= 2) {
         let pX = points[0], pY = points[1];
         stroke(C.blue[0], C.blue[1], C.blue[2]);
         strokeWeight(3);
         line(pX.x, pX.y, pY.x, pY.y);
- 
+
         let distXY = dist(pX.x, pX.y, pY.x, pY.y) / PIXELS_PER_METER;
         let midX = (pX.x + pY.x) / 2;
         let midY = (pX.y + pY.y) / 2;
         drawLabel(midX, midY - 16, `${distXY.toFixed(2)} متر`, C.blue);
       }
- 
+
       // فاصله‌های Y→Z و X→Z
       if (points.length === 3) {
         let pY = points[1], pZ = points[2], pX = points[0];
- 
+
         stroke(C.green[0], C.green[1], C.green[2]);
         strokeWeight(2.5);
         line(pY.x, pY.y, pZ.x, pZ.y);
         let distYZ = dist(pY.x, pY.y, pZ.x, pZ.y) / PIXELS_PER_METER;
         drawLabel((pY.x + pZ.x) / 2, (pY.y + pZ.y) / 2 - 16, `${distYZ.toFixed(2)} متر`, C.green);
- 
+
         stroke(C.pink[0], C.pink[1], C.pink[2]);
         strokeWeight(2.5);
         line(pX.x, pX.y, pZ.x, pZ.y);
         let distXZ = dist(pX.x, pX.y, pZ.x, pZ.y) / PIXELS_PER_METER;
         drawLabel((pX.x + pZ.x) / 2, (pX.y + pZ.y) / 2 - 16, `${distXZ.toFixed(2)} متر`, C.pink);
       }
- 
+
       // متن اطلاعات (پایین در موبایل / ستون چپ در دسکتاپ)
       drawInfoPanel();
     }
- 
+
     function drawGrid() {
       let area = drawArea();
       stroke(0, 0, 0, 12);
@@ -184,7 +189,7 @@
         line(area.left, gy, area.right, gy);
       }
     }
- 
+
     function drawLabel(cx, cy, label, colorArr) {
       noStroke();
       fill(colorArr[0], colorArr[1], colorArr[2]);
@@ -193,7 +198,7 @@
       textSize(FONT_SIZE);
       text(label, cx, cy);
     }
- 
+
     // شکستن متن به خطوطی که در maxW جا می‌شوند (باید بعد از تنظیم فونت/سایز صدا زده شود)
     function wrapLines(str, maxW) {
       let words = str.split(' ');
@@ -211,13 +216,13 @@
       if (current) lines.push(current);
       return lines;
     }
- 
+
     function drawInfoPanel() {
       if (points.length < 1) return;
- 
+
       let mobile = isMobile();
       let textX, textY, maxWidth, lineHeight = 28, align;
- 
+
       if (mobile) {
         textX = width / 2;
         textY = height - BOTTOM_UI_HEIGHT;
@@ -230,9 +235,9 @@
         maxWidth = leftW - 40;
         align = RIGHT;
       }
- 
+
       let cursorY = textY;
- 
+
       function writeParagraph(str, color, bold = false) {
         bodyFont(bold);
         textSize(INFO_FONT_SIZE);
@@ -244,45 +249,54 @@
           cursorY += lineHeight;
         }
       }
- 
+
       function gap(px = 6) { cursorY += px; }
- 
+
       if (stage === 2) {
-        writeParagraph(`فاصله (x تا x): 0`, C.pink, true);
+        writeParagraph(
+          `فاصله: \u202Ad(x,y) = ${d.toFixed(2)} m\u202C`,
+          C.blue,
+          true
+        );
         gap();
         writeParagraph("اگر شیء در نقطه‌ی x باشد، متر باید فاصله‌ی شیء تا خودش را برابر صفر نشان دهد.", C.text2);
         gap();
         writeParagraph("همچنین مطلوب است اگر متر به گونه‌ای باشد که وقتی فاصله‌ی شی تا نقطه‌ای دیگر مانند y را صفر اعلام کرد، بتوانیم بگوییم شیء در نقطه‌ی y است.", C.text2);
       }
- 
+
       if (points.length === 2) {
         let d = dist(points[0].x, points[0].y, points[1].x, points[1].y) / PIXELS_PER_METER;
- 
-        writeParagraph(`فاصله (x تا y): ${d.toFixed(2)} متر`, C.blue, true);
+
+        writeParagraph(
+          `فاصله: \u202Ad(x,y) = ${d.toFixed(2)} m\u202C`,
+          C.blue,
+          true
+        );
         gap();
-        writeParagraph("تقارن: d(x,y) = d(y,x)", C.text2);
-        gap();
+        writeParagraph("تقارن:", C.text2);
+        writeFormula("d(x,y) = d(y,x)", C.text2);
         writeParagraph("یعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x", C.text2);
       }
- 
+
       if (points.length === 3) {
         let dxy = dist(points[0].x, points[0].y, points[1].x, points[1].y) / PIXELS_PER_METER;
- 
-        writeParagraph(`فاصله (x تا y): ${dxy.toFixed(2)} متر`, C.blue, true);
-        gap();
-        writeParagraph("نامساوی مثلث: ", C.text2);
-        writeParagraph("d(x,y) ≤ d(x,z) + d(z,y)", C.text2);
+
+        writeParagraph(
+          `فاصله: \u202Ad(x,y) = ${d.toFixed(2)} m\u202C`,
+          C.blue,
+          true
+        );
         gap();
         writeParagraph("کوتاه‌ترین مسیر همیشه خط مستقیم است", C.text2);
       }
     }
- 
+
     function mousePressed() {
       let area = drawArea();
       if (mouseX < area.left || mouseX > area.right || mouseY < area.top || mouseY > area.bottom) {
         return;
       }
- 
+
       if (stage === 0) {
         points[0] = { x: mouseX, y: mouseY };
         stage = 1;
@@ -302,10 +316,11 @@
         stage = 0;
       }
     }
- 
+
     function windowResized() {
       resizeCanvas(windowWidth, windowHeight);
     }
   </script>
 </body>
+
 </html>
