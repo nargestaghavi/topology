@@ -110,16 +110,25 @@
     }
     .btn-check:hover { background: #0082beb4; box-shadow: 0 8px 20px rgba(0,0,0,0.35); }
 
+    /* فضای باکس نتیجه از همان ابتدا رزرو می‌شود (با border شفاف و همان padding)
+       تا وقتی نتیجه ظاهر می‌شود، فقط رنگ/متن عوض شود و ارتفاع صفحه ناگهان بالا نپرد. */
     #result {
       margin-top: 25px;
       padding: 20px;
+      border: 2px solid transparent;
       border-radius: 8px;
-      font-size: 3vw;
+      font-size: clamp(14px, 3vw, 22px);
       text-align: center;
       font-weight: bold;
+      min-height: 1.4em;
+      visibility: hidden;
     }
-    .yes { background: rgba(60, 190, 140, 0.18); color: #7be3b8; border: 2px solid rgba(60, 190, 140, 0.45); }
-    .no  { background: rgba(210, 40, 120, 0.18); color: #f28ab5; border: 2px solid rgba(210, 40, 120, 0.45); }
+    #result.yes,
+    #result.no {
+      visibility: visible;
+    }
+    .yes { background: rgba(60, 190, 140, 0.18); color: #7be3b8; border-color: rgba(60, 190, 140, 0.45); }
+    .no  { background: rgba(210, 40, 120, 0.18); color: #f28ab5; border-color: rgba(210, 40, 120, 0.45); }
 
     /* موبایل: همان چیدمان ۴ ستونه حفظ می‌شود، فقط اندازه‌ی دکمه‌ها کوچیک‌تر می‌شود
        تا با min-width: 0 بالا، محتوا داخل صفحه جا شود و بیرون نزند. */
@@ -132,7 +141,7 @@
         font-size: clamp(9px, 2.6vw, 12px);
         padding: 8px 4px;
       }
-      #result { font-size: 14px; padding: 14px; }
+      #result { padding: 14px; }
     }
   </style>
 </head>
