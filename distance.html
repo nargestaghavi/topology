@@ -253,11 +253,7 @@
       function gap(px = 6) { cursorY += px; }
 
       if (stage === 2) {
-        writeParagraph(
-          `فاصله: \u202Ad(x,y) = ${d.toFixed(2)} m\u202C`,
-          C.blue,
-          true
-        );
+        writeParagraph(`فاصله (x تا x): 0`, C.pink, true);
         gap();
         writeParagraph("اگر شیء در نقطه‌ی x باشد، متر باید فاصله‌ی شیء تا خودش را برابر صفر نشان دهد.", C.text2);
         gap();
@@ -267,25 +263,21 @@
       if (points.length === 2) {
         let d = dist(points[0].x, points[0].y, points[1].x, points[1].y) / PIXELS_PER_METER;
 
-        writeParagraph(
-          `فاصله: \u202Ad(x,y) = ${d.toFixed(2)} m\u202C`,
-          C.blue,
-          true
-        );
+        writeParagraph(`فاصله (x تا y): ${d.toFixed(2)} متر`, C.blue, true);
         gap();
         writeParagraph("تقارن:", C.text2);
-        writeFormula("d(x,y) = d(y,x)", C.text2);
+        writeParagraph("d(x,y) = d(y,x)", C.text2);
+        gap();
         writeParagraph("یعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x", C.text2);
       }
 
       if (points.length === 3) {
         let dxy = dist(points[0].x, points[0].y, points[1].x, points[1].y) / PIXELS_PER_METER;
 
-        writeParagraph(
-          `فاصله: \u202Ad(x,y) = ${d.toFixed(2)} m\u202C`,
-          C.blue,
-          true
-        );
+        writeParagraph(`فاصله (x تا y): ${dxy.toFixed(2)} متر`, C.blue, true);
+        gap();
+        writeParagraph("نامساوی مثلث: ", C.text2);
+        writeParagraph("d(x,y) ≤ d(x,z) + d(z,y)", C.text2);
         gap();
         writeParagraph("کوتاه‌ترین مسیر همیشه خط مستقیم است", C.text2);
       }
